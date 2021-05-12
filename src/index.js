@@ -1,5 +1,10 @@
 import {LitElement, html, css} from 'lit';
-
+import './modules/keyColors';
+import './modules/baseColor';
+import './modules/colorSpace';
+import './modules/contrastRatios';
+import './modules/colorRamp';
+import './modules/referenceCode';
 class AdaptiveColors extends LitElement {
     static get styles() {
         return css `
@@ -31,124 +36,4 @@ class AdaptiveColors extends LitElement {
     }
 } 
 
-export class keyColors extends LitElement {
-    static get styles() {
-        return css ``;
-    }
-    static get properties() {
-        return {
-        }
-    }
-
-    constructor() {
-        super();
-    }
-    render() {
-        return html`
-            <section>
-                <h2>Key colors</h2>
-            </section>`
-    }
-} 
-
-export class BaseColor extends LitElement {
-    static get styles() {
-        return css ``;
-    }
-    static get properties() {
-        return {
-        }
-    }
-
-    constructor() {
-        super();
-    }
-    render() {
-        return html`
-            <section>
-                <h2>Base color</h2>
-            </section>`
-    }
-} 
-export class ColorSpace extends LitElement {
-    static get styles() {
-        return css ``;
-    }
-    static get properties() {
-        return {
-        }
-    }
-
-    constructor() {
-        super();
-    }
-    render() {
-        return html`
-            <section>
-                <h2>Color space</h2>
-            </section>`
-    }
-} 
-export class ContrastRatios extends LitElement {
-    static get styles() {
-        return css ``;
-    }
-    static get properties() {
-        return {
-        }
-    }
-
-    constructor() {
-        super();
-    }
-    render() {
-        return html`
-            <section>
-                <h2>Contrast Ratios</h2>
-            </section>`
-    }
-} export class ColorRamp extends LitElement {
-    static get styles() {
-        return css ``;
-    }
-    static get properties() {
-        return {
-        }
-    }
-
-    constructor() {
-        super();
-    }
-    render() {
-        return html`
-            <section>
-                <h2>Color ramp</h2>
-            </section>`
-    }
-} 
-export class ReferenceCode extends LitElement {
-    static get styles() {
-        return css ``;
-    }
-    static get properties() {
-        return {
-        }
-    }
-
-    constructor() {
-        super();
-    }
-    render() {
-        return html`
-            <section>
-                <h2>Reference code</h2>
-            </section>`
-    }
-} 
-customElements.define('reference-code', ReferenceCode)
-customElements.define('color-ramp', ColorRamp)
-customElements.define('contrast-ratios', ContrastRatios)
-customElements.define('color-space', ColorSpace)
-customElements.define('base-color', BaseColor)
-customElements.define('key-colors', keyColors)
 customElements.define('adaptive-colors', AdaptiveColors)

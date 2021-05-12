@@ -1,5 +1,5 @@
 import {LitElement, html, css} from 'lit';
-class keyColors extends LitElement {
+class ColorSpace extends LitElement {
     static get styles() {
         return css ``;
     }
@@ -14,9 +14,8 @@ class keyColors extends LitElement {
     render() {
         return html`
             <section>
-                <h2>Key colors</h2>
+                <h2>Color space</h2>
             </section>`
     }
 } 
-
-customElements.define('key-colors', keyColors)
+customElements.define('color-space', ColorSpace)

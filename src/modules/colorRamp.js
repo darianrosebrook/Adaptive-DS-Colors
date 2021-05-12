@@ -1,5 +1,6 @@
 import {LitElement, html, css} from 'lit';
-class keyColors extends LitElement {
+
+class ColorRamp extends LitElement {
     static get styles() {
         return css ``;
     }
@@ -14,9 +15,8 @@ class keyColors extends LitElement {
     render() {
         return html`
             <section>
-                <h2>Key colors</h2>
+                <h2>Color ramp</h2>
             </section>`
     }
 } 
-
-customElements.define('key-colors', keyColors)
+customElements.define('color-ramp', ColorRamp)

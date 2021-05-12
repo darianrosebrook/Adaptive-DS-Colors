@@ -2,7 +2,23 @@ import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import minifyHTML from 'rollup-plugin-minify-html-literals';
 import copy from 'rollup-plugin-copy';
+import htmlBundle from 'rollup-plugin-html-bundle';
+import fg from 'fast-glob';
 
+import fs from 'fs';
+import path from 'path';
+
+// function inliner(template, dest) {
+//   return {
+//       name: 'Inliner',
+//       generateBundle(opts, bundle) {
+//           const file = path.parse(opts.file).base
+//           const code = bundle[file].code
+//           const output = fs.readFileSync(template, 'utf-8')
+//           bundle[file].code = output.replace('%%script%%', code)
+//       }
+//   }
+// }
 
 // Static assets will vary depending on the application
 const copyConfig = {
@@ -19,13 +35,28 @@ const copyConfig = {
 const config = {
   input: './src/index.js',
   output: {
-    dir: './',
-    format: 'es',
+    file: './index.js',
+    format: 'iife',
   },
-  plugins: [
+    plugins: [{
+      name: 'watch-external',
+      async buildStart(){
+          const files = await fg('src/**/*');
+          for(let file of files){
+              this.addWatchFile(file);
+          }
+      }
+    } ,
     minifyHTML(),
     copy(copyConfig),
     resolve(),
+    htmlBundle({
+      template: 'src/ui.html',
+      target: './ui.html',
+      inline: true,
+      targetElement: 'main',
+  })
+    // inliner('./src/ui.html')
   ],
   preserveEntrySignatures: false,
 };
