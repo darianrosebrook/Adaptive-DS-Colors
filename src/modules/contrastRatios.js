@@ -18,4 +18,4 @@ class ContrastRatios extends LitElement {
             </section>`
     }
 }
-customElements.define('contrast-ratios', ContrastRatios)
+customElements.define('contrast-ratios', ContrastRatios);

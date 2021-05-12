@@ -1,12 +1,13 @@
 <style>
     main.window {
       overflow-x: hidden;
+      width: 100%;
     }
     .container {
   
       display: grid;
       grid-template-columns: 1fr 1fr;
-      width: 200vw;
+      width: calc(200vw - 32px);
     }
     #main {
       font-family: Arial, Helvetica, sans-serif;
@@ -14,7 +15,6 @@
     }
     #copyContainer {
       height: 100vh;
-      background-color: green;
     }
   </style>
   <main class="window">

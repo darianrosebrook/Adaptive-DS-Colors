@@ -36,7 +36,7 @@ const config = {
   input: './src/index.js',
   output: {
     file: './index.js',
-    format: 'iife',
+    format: 'es',
   },
     plugins: [{
       name: 'watch-external',
