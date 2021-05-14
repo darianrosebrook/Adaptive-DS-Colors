@@ -15,6 +15,9 @@ class ColorSpace extends LitElement {
         return html`
             <section>
                 <h2>Color space</h2>
+                <select >
+                    <option>LAB</option>
+                </select>
             </section>`
     }
 } 

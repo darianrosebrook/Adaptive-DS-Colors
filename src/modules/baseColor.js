@@ -1,5 +1,7 @@
 import {LitElement, html, css} from 'lit';
- class BaseColor extends LitElement {
+import '../components/tooltipTrigger'
+import '../components/colorSwatch.js'
+class BaseColor extends LitElement {
     static get styles() {
         return css ``;
     }
@@ -15,6 +17,7 @@ import {LitElement, html, css} from 'lit';
         return html`
             <section>
                 <h2>Base color</h2>
+                <color-swatch></color-swatch>
             </section>`
     }
 } 
