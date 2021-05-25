@@ -3,8 +3,8 @@ class ColorSwatch extends LitElement {
     static get styles() {
         return css `input[type='color'] {
             -webkit-appearance: none;
-            height: 32px;
-            width: 32px;
+            height: 48px;
+            width: 48px;
             border: 0;
             padding: 0;
             margin: 0;
@@ -19,7 +19,7 @@ class ColorSwatch extends LitElement {
   border: none;
 }
 input[type="color"]::-webkit-color-swatch {
-    border: 1px solid var(--neutral-dark);
+    border: 1px solid var(--df-dark-neutral-dark);
     border-radius: 4px;
 }]`;
     }

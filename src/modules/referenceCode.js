@@ -1,11 +1,16 @@
 import {LitElement, html, css} from 'lit';
+import styles from '../styles'
 import '../components/tooltipTrigger'
 class ReferenceCode extends LitElement {
     static get styles() {
-        return css `
-        tooltip-trigger {
-            display: inline;
-        }`;
+        return [styles, css`
+            div {
+                margin-bottom: .5rem;
+            }
+            .grid {
+                grid-template-columns: 5fr 1fr;
+            }
+        `];
     }
     static get properties() {
         return {
@@ -18,9 +23,11 @@ class ReferenceCode extends LitElement {
     render() {
         return html`
             <section>
-                <h2>Reference code<tooltip-trigger></tooltip-trigger></h2>
-                <input type="text" placeholder='colorKeys: ["#6fa7ff"], base: "#ffffff", ratios: [3,4.5],' />
-                <button-m>Copy</button-m>
+                <div> <h2>Reference code</h2><tooltip-trigger></tooltip-trigger></div>
+                <div class="grid">
+                    <input type="text" placeholder='colorKeys: ["#6fa7ff"], base: "#ffffff", ratios: [3,4.5],' />
+                    <button-m>Copy</button-m>
+                </div>                
             </section>`
     }
 } 
