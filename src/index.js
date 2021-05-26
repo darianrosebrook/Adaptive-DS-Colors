@@ -5,6 +5,18 @@ import './modules/colorSpace';
 import './modules/contrastRatios';
 import './modules/colorRamp';
 import './modules/referenceCode';
+import * as contrastColors from '@adobe/leonardo-contrast-colors';
+
+window.createScale = contrastColors.createScale;
+window.luminance = contrastColors.luminance;
+window.contrast = contrastColors.contrast;
+window.generateContrastColors = contrastColors.generateContrastColors;
+window.contrastColors = contrastColors;
+window.generateBaseScale = contrastColors.generateBaseScale;
+window.generateAdaptiveTheme = contrastColors.generateAdaptiveTheme;
+window.minPositive = contrastColors.minPositive;
+window.ratioName = contrastColors.ratioName;
+
 class AdaptiveColors extends LitElement {
     static get styles() {
         return css `
@@ -16,6 +28,11 @@ class AdaptiveColors extends LitElement {
     }
     static get properties() {
         return {
+            keyColors: {type: Array},
+            baseColor: {type: String},
+            colorSpace: {type: String},
+            ratios: {type: Array},
+            colorScheme: {type: Object}
         }
     }
 

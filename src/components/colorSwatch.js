@@ -25,6 +25,7 @@ input[type="color"]::-webkit-color-swatch {
     }
     static get properties() {
         return {
+            colorValue: {type: String}
         }
     }
 
@@ -33,7 +34,7 @@ input[type="color"]::-webkit-color-swatch {
     }
     render() {
         return html`
-                <input type="color" value="#ffffff" />
+                <input type="color" value="${this.colorValue}" />
                 `
     }
 } 
