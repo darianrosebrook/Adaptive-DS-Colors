@@ -1,9 +1,13 @@
 import {LitElement, html, css} from 'lit';
+import { store } from '../redux/store.js';
+import { connect } from "pwa-helpers";
+import { keyColorActions } from '../redux/actions';
 import styles from '../styles'
 import '../components/colorSwatch.js'
 import '../components/tooltipTrigger'
 
-class keyColors extends LitElement {
+
+class keyColors extends connect(store)(LitElement) {
     static get styles() {
         return [styles, css `
             color-swatch {
@@ -23,11 +27,13 @@ class keyColors extends LitElement {
             keyColors: {type: Array}
         }
     }
-
     constructor() {
         super();
-        this.keyColors = ['#C0FFEE'];
+        this.keyColors = ['#ffffff'];
     }
+    stateChanged(state) {
+        this.keyColors = state.keyColors;
+      }
     render() {
         return html`
             <section>
@@ -43,7 +49,7 @@ class keyColors extends LitElement {
                 <div class="colorGrid">
                     ${this.keyColors.map((item, key) => {
                         return html`
-                            <color-swatch colorValue="${item}"></color-swatch>
+                            <color-swatch .colorValue="${{color: item, key}}"></color-swatch>
                     `
                     })} 
                 </div>
@@ -59,7 +65,12 @@ class keyColors extends LitElement {
     _executeAction = action => {
         switch (action) {
             case 'ADD':
-                this.keyColors = [...this.keyColors, '#C0FFEE']
+                store.dispatch(
+                    keyColorActions.addNewColor(
+                        this.keyColors[this.keyColors.length - 1],
+
+                    )
+                )
                 break;
             case 'BULK':
                 console.log('Execute BULK');
@@ -68,8 +79,9 @@ class keyColors extends LitElement {
                 console.log('Execute CODE');
                 break;
             case 'CLEAR':
-                this.keyColors = ['#C0FFEE']
-                break;
+                store.dispatch(
+                    keyColorActions.clearKeyColors('#ffffff')
+                )
             default:
                 break;
         }

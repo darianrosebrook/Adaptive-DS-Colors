@@ -28,7 +28,7 @@ class BaseColor extends LitElement {
                     <h2>Base color</h2>
                 </div>
                 <div> 
-                    <color-swatch colorValue="#FFFFFF"></color-swatch>
+                    <color-swatch .colorValue=${{color: "#FFFFFF", key: 0}}></color-swatch>
                 </div>
             </section>`
     }

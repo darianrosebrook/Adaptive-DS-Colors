@@ -1,10 +1,14 @@
 import {LitElement, html, css} from 'lit';
+import { store } from '../redux/store.js';
+import { connect } from "pwa-helpers";
+import { contrastRatioActions } from '../redux/actions';
 import styles from '../styles'
 import '../components/button'
 import '../components/contrastStop'
 import '../components/tooltipTrigger'
 import '../components/gradientMap'
-class ContrastRatios extends LitElement {
+
+class ContrastRatios extends connect(store)(LitElement) {
     static get styles() {
         return [
             styles,
@@ -20,12 +24,19 @@ class ContrastRatios extends LitElement {
     }
     static get properties() {
         return {
+            ratios: {type: Array},
+            keyColors: {type: Array}
         }
     }
-
     constructor() {
         super();
+        this.keyColors = ['#ffffff'];
+        this.ratios = [1.00];
     }
+    stateChanged(state) {
+        this.keyColors = state.keyColors;
+        this.ratios = state.contrastStops;
+      }
     render() {
         return html`
             <section>
@@ -33,17 +44,17 @@ class ContrastRatios extends LitElement {
                     <div>
                         <div><h2>Contrast Ratios</h2><tooltip-trigger></tooltip-trigger></div>
                         <div>
-                            <button-m><svg-icon icon="sort"></svg-icon></button-m>
-                            <button-m><svg-icon icon="distribute"></svg-icon></button-m>
-                            <button-m><svg-icon icon="add"></svg-icon></button-m>
+                            <button-m data-event="SORT" @click=${this._handleClick}><svg-icon icon="sort"></svg-icon></button-m>
+                            <button-m data-event="DISTRIBUTE" @click=${this._handleClick}><svg-icon icon="distribute"></svg-icon></button-m>
+                            <button-m data-event="ADD" @click=${this._handleClick}><svg-icon icon="add"></svg-icon></button-m>
                         </div>
                         
-                        <contrast-stop></contrast-stop>
-                        <contrast-stop></contrast-stop>
-                        <contrast-stop></contrast-stop>
-                        <contrast-stop></contrast-stop>
-                        <contrast-stop></contrast-stop>
-                        <button-m buttonText="Clear all"><svg-icon icon="clear"></svg-icon></button-m>
+                        ${this.ratios.map((item, key) => {
+                        return html`
+                            <contrast-stop ></contrast-stop>
+                    `
+                    })} 
+                        <button-m buttonText="Clear all" data-event="CLEAR" @click=${this._handleClick}><svg-icon icon="clear"></svg-icon></button-m>
                     </div>
                     <div>
                         <gradient-map></gradient-map>
@@ -51,6 +62,36 @@ class ContrastRatios extends LitElement {
                 
                 </div>
             </section>`
+    }
+    _handleClick = (e) => {
+        let target;
+        e.target.parentElement.tagName === "BUTTON-M" ?
+            target = e.target.parentElement :
+            target = e.target;
+        this._executeAction(target.dataset.event)
+    }
+    _executeAction = action => {
+        switch (action) {
+            case 'ADD':
+                store.dispatch(
+                    contrastRatioActions.addNewStop(
+                        this.ratios.length
+                    )
+                )
+                break;
+            case 'SORT':
+                console.log('Execute sort');
+                break;
+            case 'DISTRIBUTE':
+                console.log('Execute distribute');
+                break;
+            case 'CLEAR':
+                store.dispatch(
+                    contrastRatioActions.clearContrastStops(1)
+                )
+            default:
+                break;
+        }
     }
 }
 customElements.define('contrast-ratios', ContrastRatios);

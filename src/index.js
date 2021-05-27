@@ -41,12 +41,12 @@ class AdaptiveColors extends LitElement {
     }
     render() {
         return html`<main>
-            <key-colors></key-colors>
+            <key-colors ></key-colors>
             <section class="grid">
-                <base-color></base-color>
-                <color-space></color-space>
-                <contrast-ratios></contrast-ratios>
-                <color-ramp></color-ramp>
+                <base-color .baseColor=${this.baseColor}></base-color>
+                <color-space .colorSpace=${this.colorSpace}></color-space>
+                <contrast-ratios .ratios=${this.ratios}></contrast-ratios>
+                <color-ramp .colorScheme=${this.colorScheme}></color-ramp>
             </section>
             <reference-code></reference-code>
         </main>`

@@ -1,13 +1,14 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import replace from '@rollup/plugin-replace';
 import { terser } from 'rollup-plugin-terser';
 import minifyHTML from 'rollup-plugin-minify-html-literals';
 import copy from 'rollup-plugin-copy';
 import htmlBundle from 'rollup-plugin-html-bundle';
 import fg from 'fast-glob';
 
-import fs from 'fs';
-import path from 'path';
+// import fs from 'fs';
+// import path from 'path';
 
 // function inliner(template, dest) {
 //   return {
@@ -34,10 +35,18 @@ const copyConfig = {
 // The main JavaScript bundle for modern browsers that support
 // JavaScript modules and other ES2015+ features.
 const config = {
+  external: ['redux', 'crypto'],
+  globals: {
+    'redux': 'Redux',
+    'crypto': 'Crypto'
+  },
   input: './src/index.js',
   output: {
     file: './index.js',
-    format: 'es',
+    format: 'iife',
+    globals: {
+      'redux': 'Redux',
+    },
   },
     plugins: [{
       name: 'watch-external',
@@ -47,7 +56,13 @@ const config = {
               this.addWatchFile(file);
           }
       }
-    } ,commonjs(),
+    } ,
+    replace({
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      __buildDate__: () => JSON.stringify(new Date()),
+      __buildVersion: 15,
+    }),
+    commonjs(),
     minifyHTML(),
     copy(copyConfig),
     resolve(),
