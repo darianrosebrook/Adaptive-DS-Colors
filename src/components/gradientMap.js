@@ -22,12 +22,13 @@ class GradientMap extends connect(store)(LitElement) {
     }
   render() {
       return html`
-         <div class="gradient-map" style="background: linear-gradient(${this.keyColors.map((item, key) => this.keyColors.length <= 1? `${item}, #FFFFFF` : `${item}`)})">
+         <div class="gradient-map" style="background: linear-gradient(${this.keyColors.map((item, key) => this.keyColors.length <= 1? `#FFFFFF, ` : `${item}`)})">
+         <div class="container">
          ${this.ratios.map((item, key) => {
             return html`
-                <div class="contrast-stop" style="top: calc((${item - 1}/${this.ratios[this.ratios.length - 1]}) * 90%);"></div>
+                <div class="contrast-stop" style="top: calc((${item - 1}/${this.ratios[this.ratios.length - 1]}) * 100%);"></div>
           `
-          })} 
+          })} </div>
          </div>
           `
   }
@@ -39,6 +40,7 @@ class GradientMap extends connect(store)(LitElement) {
           .gradient-map {
             margin-top: 5.5rem;
             position: relative;
+            padding: 1rem 0;
             width: 100%;
             height: calc(100% - 9rem);
             border: 1px solid var(--df-dark-neutral-dark);
@@ -53,6 +55,11 @@ class GradientMap extends connect(store)(LitElement) {
             border: 1px solid var(--foreground);
             border-radius: 100%;
             background: var(--background);
+          }
+          .container {
+            position: relative;
+            display: block;
+            height: 100%;
           }
       
       `];

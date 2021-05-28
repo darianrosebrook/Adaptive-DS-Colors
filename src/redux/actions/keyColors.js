@@ -45,10 +45,10 @@ function clearKeyColors(entry) {
     entry 
   };
 }
-function clearColorItem(entry) {
+function clearColorItem(entry, key) {
   return { 
     type: keyColorConstants.CLEAR_COLOR_ITEM, 
-    entryId: entry, 
+    key, 
     entry 
   };
 }

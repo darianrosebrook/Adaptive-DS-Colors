@@ -5,7 +5,7 @@ class Button extends LitElement {
     static get styles() {
         return [styles, css`
             :host {
-                display: inline;
+                display: inline-block;
             }
             button {
                 display: inline-grid;

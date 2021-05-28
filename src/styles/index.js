@@ -264,7 +264,6 @@ export default css`
   }
   :host {
     display: block;
-    width: 100%;
   }
   
 `;

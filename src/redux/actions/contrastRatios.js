@@ -12,7 +12,7 @@ export const contrastRatioActions = {
 function addNewStop(entry) {
   return dispatch => {
   dispatch({ 
-    type: contrastRatioConstants.NEW, 
+    type: contrastRatioConstants.ADD_NEW_RATIO, 
     // entryId: nanoid(),
     entry 
   });
@@ -21,7 +21,7 @@ function addNewStop(entry) {
 function updateStop(entry, key) {
   return dispatch => {
   dispatch({ 
-    type: contrastRatioConstants.EDIT, 
+    type: contrastRatioConstants.EDIT_RATIO, 
     key,
     entry 
   });
@@ -41,14 +41,14 @@ function addFromCode(entry) {
 }
 function clearContrastStops(entry) {
   return { 
-    type: contrastRatioConstants.CLEARLIST, 
+    type: contrastRatioConstants.CLEAR_RATIO_LIST, 
     entry 
   };
 }
-function clearStopItem(entry) {
+function clearStopItem(entry, key) {
   return { 
-    type: contrastRatioConstants.CLEARITEM, 
-    entryId: entry, 
+    type: contrastRatioConstants.CLEAR_RATIO_ITEM, 
+    key, 
     entry 
   };
 }

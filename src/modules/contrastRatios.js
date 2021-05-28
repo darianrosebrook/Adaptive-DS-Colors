@@ -19,6 +19,10 @@ class ContrastRatios extends connect(store)(LitElement) {
                 .grid {
                     grid-template-columns: 2fr 1fr;
                 }
+                .button-container {
+                    display: flex;
+                    justify-content: space-between;
+                }
             `
         ];
     }
@@ -43,7 +47,7 @@ class ContrastRatios extends connect(store)(LitElement) {
                 <div class="grid">
                     <div>
                         <div><h2>Contrast Ratios</h2><tooltip-trigger></tooltip-trigger></div>
-                        <div>
+                        <div class="button-container">
                             <button-m data-event="SORT" @click=${this._handleClick}><svg-icon icon="sort"></svg-icon></button-m>
                             <button-m data-event="DISTRIBUTE" @click=${this._handleClick}><svg-icon icon="distribute"></svg-icon></button-m>
                             <button-m data-event="ADD" @click=${this._handleClick}><svg-icon icon="add"></svg-icon></button-m>
@@ -51,7 +55,7 @@ class ContrastRatios extends connect(store)(LitElement) {
                         
                         ${this.ratios.map((item, key) => {
                         return html`
-                            <contrast-stop ></contrast-stop>
+                            <contrast-stop .contrastRatio=${{ratio: item, key}}></contrast-stop>
                     `
                     })} 
                         <button-m buttonText="Clear all" data-event="CLEAR" @click=${this._handleClick}><svg-icon icon="clear"></svg-icon></button-m>
@@ -75,7 +79,7 @@ class ContrastRatios extends connect(store)(LitElement) {
             case 'ADD':
                 store.dispatch(
                     contrastRatioActions.addNewStop(
-                        this.ratios.length
+                        this.ratios.length + 1
                     )
                 )
                 break;

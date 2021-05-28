@@ -5,14 +5,12 @@ const initialState = [1.00]
 
 export const contrastStops = (state = initialState, action) => {
   switch (action.type) {
-    case contrastRatioConstants.NEW:
+    case contrastRatioConstants.ADD_NEW_RATIO:
       return [...state, action.entry ]
       break;
-    case contrastRatioConstants.EDIT:
-      const entry = action.entry,
-            key = action.key
-      const newArray = [...state];
-      newArray[key] = entry;
+    case contrastRatioConstants.EDIT_RATIO:
+      let newArray = [...state];
+      newArray[action.key] = action.entry;
       return newArray;
       break;
     // case contrastRatioConstants.BULK:
@@ -24,17 +22,11 @@ export const contrastStops = (state = initialState, action) => {
     //     },
     //   };
     //   break;
-    case contrastRatioConstants.CLEARITEM:
-      const result = {
-        ...state,
-        keyColors: {
-          ...state.keyColors,
-        },
-      };
-      delete result.keyColors[action.entryId];
-      return result;
+    case contrastRatioConstants.CLEAR_RATIO_ITEM:
+      state.splice(action.key, 1);
+      return [...state]
       break
-    case contrastRatioConstants.CLEARLIST:
+    case contrastRatioConstants.CLEAR_RATIO_LIST:
       return [action.entry];
       break
     default:
