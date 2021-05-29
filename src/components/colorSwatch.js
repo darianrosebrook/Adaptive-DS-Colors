@@ -14,6 +14,7 @@ class ColorSwatch extends LitElement {
             border-collapse: collapse;
             outline: none;
             border-radius: 4px;
+            cursor: pointer;
         }
         input[type="color"]::-webkit-color-swatch-wrapper {
   padding: 0px;
@@ -42,7 +43,7 @@ input[type="color"]::-webkit-color-swatch {
 
     render() {
         return html`
-                <input type="color" @change=${this._handleChange} value="${this.colorValue.color}" />
+                <input type="color" @change=${this._handleChange} .value="${this.colorValue.color}" />
                 `
     }
     _handleChange = (e) => {

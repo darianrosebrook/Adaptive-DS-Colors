@@ -28,49 +28,45 @@ class ColorRampResults extends LitElement {
                 color: #000;
                 padding: 1.25rem .5rem;
             }
+            .inputs-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;
+            }
         `]
     }
     render() {
         return html`
             <div class="container">
-                <div>
-                    
-                        <input type="text" placeholder="100" />
-                    
-                    
-                        <input type="text" placeholder="200" />
-                    
-                    
-                        <input type="text" placeholder="300" />
-                    
-                    
-                        <input type="text" placeholder="400" />
-                    
-                    
-                        <input type="text" placeholder="500" />
+                <div class="inputs-container">
+                ${this.ratios.map((item, key) => {
+                        return html`<input type="text" placeholder="${(key + 1) * 100}" />`})}
                     
                 </div>
                 
                 <div class="ramp-results">
-                    <div class="ramp-item" style="background:#FFEAE5;">
-                        <p>1.11</p><p>#FFEAE5</p>
-                    </div>
-                    <div class="ramp-item" style="background:#EF927C;">
-                        <p>2.22</p><p>#EF927C</p>
-                    </div>
-                    <div class="ramp-item" style="background:#E0634B;">
-                        <p>3.33</p><p>#E0634B</p>
-                    </div>
-                    <div class="ramp-item" style="background:#D33D2A;">
-                        <p>4.5</p><p>#D33D2A</p>
-                    </div>
-                    <div class="ramp-item" style="background:#CA1614;">
-                        <p>5.55</p><p>#CA1614</p>
-                    </div>
+                    
+                ${this.ratios.map((item, key) => {
+                    return html`
+                        <div class="ramp-item" style="background:${this.results[key]};">
+                            <p>${item}</p><p>${this.results[key]}</p>
+                        </div>
+                    `})}
                 </div>
             </div>
             
         `
+    }
+    static get properties() {
+        return {
+            ratios: {type: Array },
+            results: {type: Array}
+        }
+    }
+    constructor() {
+        super();
+        this.ratios = [1];
     }
 }
 customElements.define('color-results', ColorRampResults)

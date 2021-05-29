@@ -5,7 +5,7 @@ import { baseColorActions } from '../redux/actions';
 import styles from '../styles'
 import '../components/tooltipTrigger'
 import '../components/colorSwatch.js'
-class BaseColor extends LitElement {
+class BaseColor extends connect(store)(LitElement) {
     static get styles() {
         return [
             styles,

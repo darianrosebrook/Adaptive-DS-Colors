@@ -39,14 +39,14 @@ class ContrastRatios extends connect(store)(LitElement) {
     }
     stateChanged(state) {
         this.keyColors = state.keyColors;
-        this.ratios = [...state.contrastStops];
+        this.ratios = state.contrastStops;
       }
     render() {
         return html`
             <section>
                 <div class="grid">
                     <div>
-                        <div><h2>Contrast Ratios</h2><tooltip-trigger></tooltip-trigger></div>
+                        <div><h2>Contrast ratios</h2><tooltip-trigger></tooltip-trigger></div>
                         <div class="button-container">
                             <button-m data-event="SORT" @click=${this._handleClick}><svg-icon icon="sort"></svg-icon></button-m>
                             <button-m data-event="DISTRIBUTE" @click=${this._handleClick}><svg-icon icon="distribute"></svg-icon></button-m>
@@ -77,9 +77,13 @@ class ContrastRatios extends connect(store)(LitElement) {
     _executeAction = action => {
         switch (action) {
             case 'ADD':
+                let stopToAdd = 
+                this.ratios.length < 21 ? 
+                this.ratios.length + 1 :
+                21;
                 store.dispatch(
                     contrastRatioActions.addNewStop(
-                        this.ratios.length + 1
+                        stopToAdd
                     )
                 )
                 break;
