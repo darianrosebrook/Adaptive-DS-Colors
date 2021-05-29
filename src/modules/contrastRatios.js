@@ -39,7 +39,7 @@ class ContrastRatios extends connect(store)(LitElement) {
     }
     stateChanged(state) {
         this.keyColors = state.keyColors;
-        this.ratios = state.contrastStops;
+        this.ratios = [...state.contrastStops];
       }
     render() {
         return html`
@@ -84,10 +84,28 @@ class ContrastRatios extends connect(store)(LitElement) {
                 )
                 break;
             case 'SORT':
-                console.log('Execute sort');
+                store.dispatch(
+                    contrastRatioActions.updateRatios(
+                        this.ratios.sort(function(a, b){return a-b})
+                        )
+                )
                 break;
             case 'DISTRIBUTE':
-                console.log('Execute distribute');
+                let sorted = this.ratios.sort(function(a, b){return a-b});
+                function makeArr(startValue, stopValue, cardinality) {
+                    var arr = [];
+                    var step = (stopValue - startValue) / (cardinality - 1);
+                    for (var i = 0; i < cardinality; i++) {
+                      arr.push(parseFloat((startValue + (step * i)).toFixed(2)))
+                    }
+                    return arr;
+                  }
+                
+                store.dispatch(
+                    contrastRatioActions.updateRatios(
+                        makeArr(sorted[0], sorted[sorted.length - 1], sorted.length)
+                        )
+                )
                 break;
             case 'CLEAR':
                 store.dispatch(

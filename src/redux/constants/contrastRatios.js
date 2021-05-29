@@ -1,6 +1,7 @@
 export const contrastRatioConstants = {
   ADD_NEW_RATIO: 'ADD_NEW',
   EDIT_RATIO: 'EDIT_RATIO',
+  UPDATE_RATIOS: 'UPDATE_RATIOS',
   // BULK: 'ADD_BULK',
   // CODE: 'ADD_CODE',
   CLEAR_RATIO_LIST: 'CLEAR_RATIO_LIST',

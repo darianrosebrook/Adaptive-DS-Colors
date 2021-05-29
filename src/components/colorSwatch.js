@@ -1,9 +1,6 @@
 import {LitElement, html, css} from 'lit';
-import { store } from "../redux/store.js";
-import { connect } from "pwa-helpers";
-import { keyColorActions } from '../redux/actions';
 
-class ColorSwatch extends connect(store)(LitElement) {
+class ColorSwatch extends LitElement {
     static get styles() {
         return css `input[type='color'] {
             -webkit-appearance: none;
@@ -32,7 +29,8 @@ input[type="color"]::-webkit-color-swatch {
             colorValue: {
                 color: {type: String},
                 key: {type: Number}
-            }
+            },
+            _handleChange: {type: Object}
         }
     }
     constructor() {
@@ -40,9 +38,6 @@ input[type="color"]::-webkit-color-swatch {
         this.colorValue = {color: '#ffffff', key: 0}
     }
 
-    stateChanged(state) {
-        this.colorValue.color = state.keyColors[this.colorValue.key]
-    }
 
 
     render() {
@@ -52,11 +47,12 @@ input[type="color"]::-webkit-color-swatch {
     }
     _handleChange = (e) => {
         this.colorValue.color = e.target.value;
-        store.dispatch(
-            keyColorActions.updateColor(
-                this.colorValue.color, this.colorValue.key
-            )
-        )
+        const event = new CustomEvent('colorInputChange', {
+            bubbles: true,
+            composed: true,
+            detail: this.colorValue
+          });
+          this.dispatchEvent(event);
     }
 } 
 customElements.define('color-swatch', ColorSwatch);

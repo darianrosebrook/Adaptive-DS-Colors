@@ -9,24 +9,25 @@ class GradientMap extends connect(store)(LitElement) {
     return {
       ratios: {type: Array},
       keyColors: {type: Array},
-      base: {type: String}
+      baseColor: {type: String}
     }
   }
   constructor() {
     super();
     this.keyColors = ['#ffffff'];
     this.ratios = [];
-    this.base = '#ffffff'
+    this.baseColor = '#ffffff'
   }
   stateChanged(state) {
       this.ratios = state.contrastStops;
-      this.keyColors = state.keyColors;
+      this.keyColors = state.keyColors; 
+      this.baseColor = state.baseColor; 
     }
   render() {
       return html`
          <div class="gradient-map" 
               style="background: linear-gradient(
-                ${this.base}, 
+                ${this.baseColor}, 
                 ${this.keyColors.join()}
               )"
          >

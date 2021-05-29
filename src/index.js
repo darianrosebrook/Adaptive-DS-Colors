@@ -1,4 +1,6 @@
 import {LitElement, html, css} from 'lit';
+import { store } from './redux/store.js';
+import { connect } from "pwa-helpers";
 import './modules/keyColors';
 import './modules/baseColor';
 import './modules/colorSpace';
@@ -6,6 +8,7 @@ import './modules/contrastRatios';
 import './modules/colorRamp';
 import './modules/referenceCode';
 import * as contrastColors from '@adobe/leonardo-contrast-colors';
+import * as d3 from 'd3';
 
 window.createScale = contrastColors.createScale;
 window.luminance = contrastColors.luminance;
@@ -17,7 +20,7 @@ window.generateAdaptiveTheme = contrastColors.generateAdaptiveTheme;
 window.minPositive = contrastColors.minPositive;
 window.ratioName = contrastColors.ratioName;
 
-class AdaptiveColors extends LitElement {
+class AdaptiveColors extends connect(store)(LitElement) {
     static get styles() {
         return css `
         .grid {
@@ -35,7 +38,9 @@ class AdaptiveColors extends LitElement {
             colorScheme: {type: Object}
         }
     }
-
+    stateChanged(state) {
+        console.log(state);
+    }
     constructor() {
         super();
     }

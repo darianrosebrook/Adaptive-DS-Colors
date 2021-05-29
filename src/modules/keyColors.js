@@ -49,7 +49,7 @@ class keyColors extends connect(store)(LitElement) {
                 <div class="colorGrid">
                     ${this.keyColors.map((item, key) => {
                         return html`
-                            <color-swatch .colorValue="${{color: item, key}}"></color-swatch>
+                            <color-swatch @colorInputChange=${this._handleChange} .colorValue="${{color: this.keyColors[key], key}}" ></color-swatch>
                     `
                     })} 
                 </div>
@@ -61,6 +61,13 @@ class keyColors extends connect(store)(LitElement) {
             target = e.target.parentElement :
             target = e.target;
         this._executeAction(target.dataset.event)
+    }
+    _handleChange = (e) => {
+        store.dispatch(
+            keyColorActions.updateColor(
+                e.detail.color, e.detail.key
+            )
+        )
     }
     _executeAction = action => {
         switch (action) {

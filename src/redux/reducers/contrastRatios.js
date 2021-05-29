@@ -13,6 +13,9 @@ export const contrastStops = (state = initialState, action) => {
       newArray[action.key] = action.entry;
       return newArray;
       break;
+    case contrastRatioConstants.UPDATE_RATIOS:
+      return action.entry;
+      break;
     // case contrastRatioConstants.BULK:
     //   return {
     //     ...state,

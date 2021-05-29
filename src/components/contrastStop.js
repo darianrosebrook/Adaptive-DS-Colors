@@ -8,7 +8,7 @@ class ContrastStop extends connect(store)(LitElement) {
     render() {
         return html`
             <div class='grid'>
-                <input @change=${this._handleChange} type="text" placeholder="4.5" value="${this.contrastRatio.ratio}" />
+                <input @change=${this._handleChange} type="number" placeholder="4.5" min="1" max='21' .value="${this.contrastRatio.ratio}" />
                 <button-m @click=${this._handleRemove} ><svg-icon icon="clear"></svg-icon></button-m>
             </div>
         `
@@ -30,7 +30,7 @@ class ContrastStop extends connect(store)(LitElement) {
     static get properties() {
         return {
             contrastRatio: {
-                ratio: {type: String},
+                ratio: {type: Number},
                 key: {type: Number}
             }
         }
@@ -39,18 +39,27 @@ class ContrastStop extends connect(store)(LitElement) {
         super();
         this.contrastRatio = {ratio: 1, key: 0}
     }
-
     stateChanged(state) {
-        this.contrastRatio.ratio = state.contrastStops[this.contrastRatio.key]
+        this.contrastRatio.ratio = state.contrastStops[this.contrastRatio.key];
     }
-    _handleChange = (e) => {
-        this.contrastRatio.ratio = e.target.value;
+    _handleChange = (e) => { 
+        let el = e.target;
+        if(el.type == "number" && el.max && el.min ){
+            let value = parseInt(el.value)
+            el.value = value // for 000 like input cleanup to 0
+            let max = parseInt(el.max)
+            let min = parseInt(el.min)
+            if ( value > max ) el.value = el.max
+            if ( value < min ) el.value = el.min
+        }
+        this.contrastRatio = {...this.contrastRatio, ratio: e.target.valueAsNumber}
         store.dispatch(
             contrastRatioActions.updateStop(
                 this.contrastRatio.ratio, this.contrastRatio.key
             )
         )
     }
+
     _handleRemove = (e) => {
         store.dispatch(
             contrastRatioActions.clearStopItem(

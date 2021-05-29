@@ -7,6 +7,7 @@ export const contrastRatioActions = {
   // addFromCode,
   clearContrastStops,
   clearStopItem,
+  updateRatios
 };
 
 function addNewStop(entry) {
@@ -23,6 +24,14 @@ function updateStop(entry, key) {
   dispatch({ 
     type: contrastRatioConstants.EDIT_RATIO, 
     key,
+    entry 
+  });
+  }
+}
+function updateRatios(entry, key) {
+  return dispatch => {
+  dispatch({ 
+    type: contrastRatioConstants.UPDATE_RATIOS, 
     entry 
   });
   }
