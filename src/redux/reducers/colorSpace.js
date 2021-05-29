@@ -1,7 +1,7 @@
 import {colorSpaceConstants} from '../constants';
 import {createSelector } from 'reselect';
 
-const initialState = 'CIECAM02';
+const initialState = 'CAM02';
 
 export const colorSpace = (state = initialState, action) => {
   switch (action.type) {

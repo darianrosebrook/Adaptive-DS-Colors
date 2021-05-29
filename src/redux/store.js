@@ -8,7 +8,7 @@ import thunk from "./services/reduxThunk";
 import { lazyReducerEnhancer } from "pwa-helpers";
 const compose = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || origCompose;
 
-import {baseColor, keyColors, contrastStops, colorSpace} from "./reducers";
+import {baseColor, keyColors, contrastStops, colorSpace, colorRamp} from "./reducers";
 
 
 export const store = createStore(
@@ -17,5 +17,5 @@ export const store = createStore(
 );
 
 store.addReducers({
-  baseColor, keyColors, contrastStops, colorSpace
+  baseColor, keyColors, contrastStops, colorSpace, colorRamp
 }); 

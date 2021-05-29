@@ -53,7 +53,13 @@ input[type="color"]::-webkit-color-swatch {
             composed: true,
             detail: this.colorValue
           });
-          this.dispatchEvent(event);
+        const shouldDispatch = new CustomEvent('shouldDispatch', {
+            bubbles: true,
+            composed: true,
+            detail: true
+        });
+        this.dispatchEvent(event);
+        this.dispatchEvent(shouldDispatch);
     }
 } 
 customElements.define('color-swatch', ColorSwatch);

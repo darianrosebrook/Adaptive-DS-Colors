@@ -45,7 +45,8 @@ class ContrastStop extends connect(store)(LitElement) {
     _handleChange = (e) => { 
         let el = e.target;
         if(el.type == "number" && el.max && el.min ){
-            let value = parseInt(el.value)
+            let value = parseFloat(el.value).toFixed(2)
+            console.log(el.value, value);
             el.value = value // for 000 like input cleanup to 0
             let max = parseInt(el.max)
             let min = parseInt(el.min)
@@ -58,6 +59,12 @@ class ContrastStop extends connect(store)(LitElement) {
                 this.contrastRatio.ratio, this.contrastRatio.key
             )
         )
+        const shouldDispatch = new CustomEvent('shouldDispatch', {
+            bubbles: true,
+            composed: true,
+            detail: true
+          });
+          this.dispatchEvent(shouldDispatch);
     }
 
     _handleRemove = (e) => {

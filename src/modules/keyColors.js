@@ -61,6 +61,12 @@ class keyColors extends connect(store)(LitElement) {
             target = e.target.parentElement :
             target = e.target;
         this._executeAction(target.dataset.event)
+        const shouldDispatch = new CustomEvent('shouldDispatch', {
+            bubbles: true,
+            composed: true,
+            detail: true
+          });
+          this.dispatchEvent(shouldDispatch);
     }
     _handleChange = (e) => {
         store.dispatch(
@@ -75,7 +81,6 @@ class keyColors extends connect(store)(LitElement) {
                 store.dispatch(
                     keyColorActions.addNewColor(
                         this.keyColors[this.keyColors.length - 1],
-
                     )
                 )
                 break;

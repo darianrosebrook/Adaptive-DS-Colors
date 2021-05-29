@@ -18,6 +18,7 @@ class ColorRampResults extends LitElement {
                 margin-bottom: .5rem;
             }
             .ramp-results {
+                border: 1px solid var(--df-dark-neutral-dark);
                 border-radius: 4px;
                 overflow: hidden;
             }
@@ -41,7 +42,7 @@ class ColorRampResults extends LitElement {
             <div class="container">
                 <div class="inputs-container">
                 ${this.ratios.map((item, key) => {
-                        return html`<input type="text" placeholder="${(key + 1) * 100}" />`})}
+                        return html`<input @change=${e => this._handleChange(e, key)} type="text" placeholder="${(key + 1) * 100}" } />`})}
                     
                 </div>
                 
@@ -49,8 +50,8 @@ class ColorRampResults extends LitElement {
                     
                 ${this.ratios.map((item, key) => {
                     return html`
-                        <div class="ramp-item" style="background:${this.results[key]};">
-                            <p>${item}</p><p>${this.results[key]}</p>
+                        <div class="ramp-item" .style=${`color: #FFFFFF;background: ${this.results[key].color}`} >
+                            <p>${item}</p><p>${this.results[key].color}</p>
                         </div>
                     `})}
                 </div>
@@ -61,12 +62,30 @@ class ColorRampResults extends LitElement {
     static get properties() {
         return {
             ratios: {type: Array },
-            results: {type: Array}
+            results: {type: Array},
+            stops: {type: Array}
         }
     }
     constructor() {
         super();
         this.ratios = [1];
+        this.stops = ['100'];
+        this.results = [];
+    }
+    _handleChange(e, key) {
+        this.stops[key] = e.target.value;
+        const event = new CustomEvent('colorStopChange', {
+            bubbles: true,
+            composed: true,
+            detail: {value: e.target.value, key}
+          });
+        const shouldDispatch = new CustomEvent('shouldDispatch', {
+            bubbles: true,
+            composed: true,
+            detail: true
+          });
+          this.dispatchEvent(event);
+          this.dispatchEvent(shouldDispatch);
     }
 }
 customElements.define('color-results', ColorRampResults)

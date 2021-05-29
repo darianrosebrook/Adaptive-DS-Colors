@@ -1,6 +1,7 @@
 import {LitElement, html, css} from 'lit';
 import { store } from './redux/store.js';
 import { connect } from "pwa-helpers";
+import { colorRampActions } from './redux/actions';
 import './modules/keyColors';
 import './modules/baseColor';
 import './modules/colorSpace';
@@ -35,26 +36,41 @@ class AdaptiveColors extends connect(store)(LitElement) {
             baseColor: {type: String},
             colorSpace: {type: String},
             ratios: {type: Array},
-            colorScheme: {type: Object}
+            colorScheme: {type: Object},
+            results: {type: Array}
         }
     }
     stateChanged(state) {
         console.log(state);
+        this.keyColors = state.keyColors;
+        this.baseColor = state.baseColor;
+        this.colorSpace = state.colorSpace;
+        this.ratios = state.contrastStops;
+        this.results = contrastColors.generateContrastColors({colorKeys: this.keyColors, base: this.baseColor, ratios: this.ratios, colorspace: this.colorSpace});
+
     }
     constructor() {
         super();
+        this.results = ["#ffffff"]
     }
     render() {
         return html`<main>
-            <key-colors ></key-colors>
+            <key-colors @shouldDispatch=${this.updateRamp}></key-colors>
             <section class="grid">
-                <base-color .baseColor=${this.baseColor}></base-color>
-                <color-space .colorSpace=${this.colorSpace}></color-space>
-                <contrast-ratios .ratios=${this.ratios}></contrast-ratios>
-                <color-ramp .colorScheme=${this.colorScheme}></color-ramp>
+                <base-color @shouldDispatch=${this.updateRamp} .baseColor=${this.baseColor}></base-color>
+                <color-space @shouldDispatch=${this.updateRamp} .colorSpace=${this.colorSpace}></color-space>
+                <contrast-ratios @shouldDispatch=${this.updateRamp} .ratios=${this.ratios}></contrast-ratios>
+                <color-ramp @shouldDispatch=${this.updateRamp} .colorScheme=${this.colorScheme}></color-ramp>
             </section>
             <reference-code></reference-code>
         </main>`
+    }
+    updateRamp = () => {
+        store.dispatch(
+            colorRampActions.updateColorRamp(
+                this.results
+            )
+        )
     }
 } 
 

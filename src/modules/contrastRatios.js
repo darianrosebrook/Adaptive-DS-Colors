@@ -1,7 +1,7 @@
 import {LitElement, html, css} from 'lit';
 import { store } from '../redux/store.js';
 import { connect } from "pwa-helpers";
-import { contrastRatioActions } from '../redux/actions';
+import { contrastRatioActions, colorRampActions } from '../redux/actions';
 import styles from '../styles'
 import '../components/button'
 import '../components/contrastStop'
@@ -29,17 +29,20 @@ class ContrastRatios extends connect(store)(LitElement) {
     static get properties() {
         return {
             ratios: {type: Array},
-            keyColors: {type: Array}
+            keyColors: {type: Array},
+            results: {type: Array}
         }
     }
     constructor() {
         super();
         this.keyColors = ['#ffffff'];
         this.ratios = [1.00];
+        this.results = []
     }
     stateChanged(state) {
         this.keyColors = state.keyColors;
-        this.ratios = state.contrastStops;
+        this.results = contrastColors.generateContrastColors({colorKeys: state.keyColors, base: state.baseColor, ratios: state.contrastStops, colorspace: state.colorSpace});
+        
       }
     render() {
         return html`
@@ -73,6 +76,12 @@ class ContrastRatios extends connect(store)(LitElement) {
             target = e.target.parentElement :
             target = e.target;
         this._executeAction(target.dataset.event)
+        const shouldDispatch = new CustomEvent('shouldDispatch', {
+            bubbles: true,
+            composed: true,
+            detail: true
+          });
+          this.dispatchEvent(shouldDispatch);
     }
     _executeAction = action => {
         switch (action) {

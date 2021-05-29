@@ -9,7 +9,8 @@ class GradientMap extends connect(store)(LitElement) {
     return {
       ratios: {type: Array},
       keyColors: {type: Array},
-      baseColor: {type: String}
+      baseColor: {type: String},
+      sortedRatios: {type: Array}
     }
   }
   constructor() {
@@ -17,11 +18,13 @@ class GradientMap extends connect(store)(LitElement) {
     this.keyColors = ['#ffffff'];
     this.ratios = [];
     this.baseColor = '#ffffff'
+    this.sortedRatios = []
   }
   stateChanged(state) {
       this.ratios = state.contrastStops;
       this.keyColors = state.keyColors; 
       this.baseColor = state.baseColor; 
+      this.sortedRatios = this.ratios;
     }
   render() {
       return html`
@@ -32,7 +35,7 @@ class GradientMap extends connect(store)(LitElement) {
               )"
          >
          <div class="container">
-         ${this.ratios.map((item, key) => {
+         ${this.sortedRatios.sort(function(a, b){return a-b}).map((item, key) => {
             return html`
                 <div class="contrast-stop" style="top: calc(((${item}/${this.ratios[this.ratios.length - 1]}) * 100%) - 12px);"></div>
           `

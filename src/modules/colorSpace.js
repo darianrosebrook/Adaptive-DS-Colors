@@ -36,7 +36,7 @@ class ColorSpace extends connect(store)(LitElement) {
                     <h2>Color space</h2>
                 </div>
                 <select @change=${this._handleChange}>
-                    <option>CIECAM02</option>
+                    <option value="CAM02">CIECAM02</option>
                     <option>LCH</option>
                     <option>LAB</option>
                     <option>HSL</option>
@@ -48,6 +48,12 @@ class ColorSpace extends connect(store)(LitElement) {
             </section>`
     }
     _handleChange = (e) => {
+        const shouldDispatch = new CustomEvent('shouldDispatch', {
+            bubbles: true,
+            composed: true,
+            detail: true
+          });
+          this.dispatchEvent(shouldDispatch);
         store.dispatch(
             colorSpaceActions.updateColorSpace(
                 e.target.value
