@@ -9,7 +9,12 @@ import './modules/contrastRatios';
 import './modules/colorRamp';
 import './modules/referenceCode';
 import * as contrastColors from '@adobe/leonardo-contrast-colors';
-import * as d3 from 'd3';
+import * as d3start from 'd3';
+// Import d3 plugins and add them to the d3 namespace
+import * as d3cam02 from 'd3-cam02';
+import * as d3hsluv from 'd3-hsluv';
+import * as d3hsv from 'd3-hsv';
+const d3 = Object.assign({}, d3start, d3cam02,d3hsluv,d3hsv);
 
 window.createScale = contrastColors.createScale;
 window.luminance = contrastColors.luminance;
@@ -37,7 +42,10 @@ class AdaptiveColors extends connect(store)(LitElement) {
             colorSpace: {type: String},
             ratios: {type: Array},
             colorScheme: {type: Object},
-            results: {type: Array}
+            results: {
+                colors: {type: Array},
+                contrasts: {type: Array}
+            }
         }
     }
     stateChanged(state) {
@@ -46,12 +54,19 @@ class AdaptiveColors extends connect(store)(LitElement) {
         this.baseColor = state.baseColor;
         this.colorSpace = state.colorSpace;
         this.ratios = state.contrastStops;
-        this.results = contrastColors.generateContrastColors({colorKeys: this.keyColors, base: this.baseColor, ratios: this.ratios, colorspace: this.colorSpace});
+        this.results.colors =  contrastColors.generateContrastColors({colorKeys: this.keyColors, base: this.baseColor, ratios: this.ratios, colorspace: this.colorSpace});
+        for( let i = 0; i < this.results.colors.length; i++) {
+            this.results.contrasts[i] = parseInt(contrastColors.contrast([d3.rgb(this.results.colors[i]).r, d3.rgb(this.results.colors[i]).g, d3.rgb(this.results.colors[i]).b], [d3.rgb(this.baseColor).r, d3.rgb(this.baseColor).g, d3.rgb(this.baseColor).b])).toFixed(2)
+        }
 
     }
     constructor() {
         super();
-        this.results = ["#ffffff"]
+        this.results = {
+            colors: ['#ffffff'],
+            contrasts: [1]
+
+        }
     }
     render() {
         return html`<main>
@@ -66,10 +81,12 @@ class AdaptiveColors extends connect(store)(LitElement) {
         </main>`
     }
     updateRamp = () => {
+        console.log(this.results)
         store.dispatch(
-            colorRampActions.updateColorRamp(
-                this.results
-            )
+            colorRampActions.updateColorRamp({
+                results: this.results.colors,
+                contrast: this.results.contrasts
+            })
         )
     }
 } 

@@ -8,7 +8,7 @@ class ContrastStop extends connect(store)(LitElement) {
     render() {
         return html`
             <div class='grid'>
-                <input @change=${this._handleChange} type="number" placeholder="4.5" min="1" max='21' .value="${this.contrastRatio.ratio}" />
+                <input @change=${this._handleChange} type="number" placeholder="4.5" step='.01' min="1" max='21' .value="${this.contrastRatio.ratio}" />
                 <button-m @click=${this._handleRemove} ><svg-icon icon="clear"></svg-icon></button-m>
             </div>
         `
@@ -46,7 +46,6 @@ class ContrastStop extends connect(store)(LitElement) {
         let el = e.target;
         if(el.type == "number" && el.max && el.min ){
             let value = parseFloat(el.value).toFixed(2)
-            console.log(el.value, value);
             el.value = value // for 000 like input cleanup to 0
             let max = parseInt(el.max)
             let min = parseInt(el.min)

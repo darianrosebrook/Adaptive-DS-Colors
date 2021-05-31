@@ -14,7 +14,7 @@ export const colorRamp = (state = initialState, action) => {
     case colorRampConstants.UPDATE_COLOR_RAMP:
       let newArray = [];
       for(let i = 0; i < action.entry.length; i++) {
-        newArray.push({stop: 100, contrast: 1, color: action.entry[i]})
+        newArray.push({stop: 100, contrast: action.entry.contrast[i], color: action.entry.results[i]})
       }
       return {...state, colorResults: newArray}
       break;
