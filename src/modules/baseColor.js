@@ -1,7 +1,6 @@
 import {LitElement, html, css} from 'lit';
 import { store } from '../redux/store.js';
 import { connect } from "pwa-helpers";
-import { baseColorActions } from '../redux/actions';
 import styles from '../styles'
 import '../components/tooltipTrigger'
 import '../components/colorSwatch.js'
@@ -31,16 +30,9 @@ class BaseColor extends connect(store)(LitElement) {
                     <h2>Base color</h2>
                 </div>
                 <div> 
-                    <color-swatch @colorInputChange=${this._handleChange} .colorValue=${{color: "#FFFFFF", key: 0}}></color-swatch>
+                    <color-swatch .colorValue=${{color: "#FFFFFF", key: 0}}></color-swatch>
                 </div>
             </section>`
-    }
-    _handleChange = (e) => {
-        store.dispatch(
-            baseColorActions.updateColor(
-                e.detail.color
-            )
-        )
     }
 } 
 customElements.define('base-color', BaseColor)
