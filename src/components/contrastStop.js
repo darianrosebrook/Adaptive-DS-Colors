@@ -1,15 +1,13 @@
 import {LitElement, html, css} from 'lit';
-import { store } from '../redux/store.js';
-import { connect } from "pwa-helpers";
 import { contrastRatioActions } from '../redux/actions';
 import styles from '../styles'
 import '../components/button'
-class ContrastStop extends connect(store)(LitElement) {
+class ContrastStop extends LitElement {
     render() {
         return html`
             <div class='grid'>
                 <input @change=${this._handleChange} type="number" placeholder="4.5" step='.01' min="1" max='21' .value="${this.contrastRatio.ratio}" />
-                <button-m @click=${this._handleRemove} ><svg-icon icon="clear"></svg-icon></button-m>
+                <button-m context="REMOVE_RATIO" key=${this.contrastRatio.key}><svg-icon icon="clear"></svg-icon></button-m>
             </div>
         `
     }
@@ -39,10 +37,7 @@ class ContrastStop extends connect(store)(LitElement) {
         super();
         this.contrastRatio = {ratio: 1, key: 0}
     }
-    stateChanged(state) {
-        this.contrastRatio.ratio = state.contrastStops[this.contrastRatio.key];
-    }
-    _handleChange = (e) => { 
+    _handleChange = (e) => {
         let el = e.target;
         if(el.type == "number" && el.max && el.min ){
             let value = parseFloat(el.value).toFixed(2)
@@ -53,25 +48,14 @@ class ContrastStop extends connect(store)(LitElement) {
             if ( value < min ) el.value = el.min
         }
         this.contrastRatio = {...this.contrastRatio, ratio: e.target.valueAsNumber}
-        store.dispatch(
-            contrastRatioActions.updateStop(
-                this.contrastRatio.ratio, this.contrastRatio.key
-            )
-        )
-        const shouldDispatch = new CustomEvent('shouldDispatch', {
+
+        const event = new CustomEvent('handleInputChange', {
             bubbles: true,
             composed: true,
-            detail: true
+            detail: {value: this.contrastRatio.ratio, key: this.contrastRatio.key}
           });
-          this.dispatchEvent(shouldDispatch);
+        this.dispatchEvent(event);
     }
 
-    _handleRemove = (e) => {
-        store.dispatch(
-            contrastRatioActions.clearStopItem(
-                this.contrastRatio.ratio, this.contrastRatio.key
-            )
-        )
-    }
 }
 customElements.define('contrast-stop', ContrastStop)

@@ -48,18 +48,12 @@ input[type="color"]::-webkit-color-swatch {
     }
     _handleChange = (e) => {
         this.colorValue.color = e.target.value;
-        const event = new CustomEvent('colorInputChange', {
+        const event = new CustomEvent('handleInputChange', {
             bubbles: true,
             composed: true,
-            detail: this.colorValue
+            detail: {value: this.colorValue.color, key: this.colorValue.key}
           });
-        const shouldDispatch = new CustomEvent('shouldDispatch', {
-            bubbles: true,
-            composed: true,
-            detail: true
-        });
         this.dispatchEvent(event);
-        this.dispatchEvent(shouldDispatch);
     }
 } 
 customElements.define('color-swatch', ColorSwatch);

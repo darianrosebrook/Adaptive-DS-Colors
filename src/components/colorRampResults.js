@@ -50,8 +50,8 @@ class ColorRampResults extends LitElement {
                     
                 ${this.ratios.map((item, key) => {
                     return html`
-                        <div class="ramp-item" .style=${`color: ${this.colorResults.contrastDisplay[key]};background: ${this.colorResults.results[key].color}`} >
-                            <p>${item}</p><p>${this.colorResults.results[key].color}</p>
+                        <div class="ramp-item" .style=${`color: ${this.colorResults[key].contrastDisplay};background: ${this.colorResults[key].color}`} >
+                            <p>${this.colorResults[key].contrastRatio}</p><p>${this.colorResults[key].color}</p>
                         </div>
                     `})}
                 </div>
@@ -62,10 +62,14 @@ class ColorRampResults extends LitElement {
     static get properties() {
         return {
             ratios: {type: Array },
-            colorResults: {
-                contrastDisplay: {type: Array},
-                results: {type: Array}
-            },
+            colorResults: [
+                {
+                    colorStop: {type: String},
+                    contrastDisplay: {type: String},
+                    contrastRatio: {type: Number},
+                    color: {type: String},
+                }
+            ],
             stops: {type: Array}
         }
     }
@@ -73,7 +77,7 @@ class ColorRampResults extends LitElement {
         super();
         this.ratios = [1];
         this.stops = ['100'];
-        this.colorResults = {results: [], contrastDisplay: []};
+        this.colorResults = [];
     }
     _handleChange(e, key) {
         this.stops[key] = e.target.value;

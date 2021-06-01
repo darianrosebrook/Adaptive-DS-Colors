@@ -16,13 +16,15 @@ class Button extends LitElement {
     static get properties() {
         return {
             buttonText: {type: String},
-            context: {type: String}
+            context: {type: String},
+            key: {type: Number}
         }
     }
     constructor() {
         super();
         this.buttonText = '';
         this.context = ';'
+        this.key = 0;
     }
     render() {
         return html`
@@ -37,7 +39,7 @@ class Button extends LitElement {
         const event = new CustomEvent('buttonClick', {
             bubbles: true,
             composed: true,
-            detail: this.context
+            detail: {context: this.context,key: this.key}
           });
 
         this.dispatchEvent(event);
