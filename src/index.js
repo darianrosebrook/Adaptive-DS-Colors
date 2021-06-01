@@ -59,7 +59,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 <base-color @handleInputChange=${e => this._handleInputChange(e, 'BASE_COLOR' )} .baseColor=${this.baseColor}></base-color>
                 <color-space @shouldDispatch=${this.updateRamp} .colorSpace=${this.inputs.colorSpace}></color-space>
                 <contrast-ratios @handleInputChange=${e => this._handleInputChange(e, 'CONTRAST_RATIO' )} @buttonClick=${this._handleClick} .ratios=${this.inputs.ratios}></contrast-ratios>
-                <color-ramp @shouldDispatch=${this.updateRamp} .colorResults=${this.ramp.colors} .ratios=${this.ramp.contrasts}></color-ramp>
+                <color-ramp @buttonClick=${this._handleClick} @colorThemeChange=${e => this._handleInputChange(e, 'COLOR_RAMP')} @colorStopChange=${e => this._handleInputChange(e, 'COLOR_RAMP')} .colorResults=${this.ramp.colors} .ratios=${this.ramp.contrasts}></color-ramp>
             </section>
             <reference-code></reference-code>
         </main>`
@@ -133,6 +133,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
             }
         }
         this.ramp.colors = newColors
+        this.ramp.colorScheme = state.colorRamp.colorScheme;
 
     }
     static get styles() {
@@ -174,6 +175,15 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 )
                 break;
         
+            case 'COLOR_RAMP':
+                console.log(e.detail.key);
+                store.dispatch(
+                    colorRampActions.updateColorRamp(
+                        e.detail.value, e.detail.key
+                    )
+                )
+                break;
+        
             default:
                 break;
         }
@@ -201,6 +211,10 @@ class AdaptiveColors extends connect(store)(LitElement) {
     _executeAction = action => {
         console.log(`Start: ${action.context}`, action.key);
         switch (action.context) {
+            case "TEST_RAMP": 
+                console.log(this.ramp);
+                parent.postMessage({pluginMessage: {detail: {ramp: this.ramp, type: action.context} }}, '*')
+                break
             case 'ADD_KEY_COLOR':
                 store.dispatch(
                     keyColorActions.addNewColor(

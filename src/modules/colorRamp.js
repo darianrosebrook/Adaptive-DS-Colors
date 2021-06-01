@@ -45,29 +45,27 @@ class ColorRamp extends LitElement{
                 
             <div><h2>Color ramp</h2><tooltip-trigger></tooltip-trigger></div>
                 <div>
-                    <input type="text" placeholder="Color Ramp / Red" />
+                    <input @change=${this._handleChange} type="text" placeholder="Color Ramp / Red" />
                 </div>
                 <div>
-                    <color-results @colorStopChange=${this._handleChange} .ratios=${this.ratios} .colorResults=${this.colorResults} ></color-results>
+                    <color-results  .ratios=${this.ratios} .colorResults=${this.colorResults} ></color-results>
                 </div>
                 <div>
                     <button-m buttonText="Copy"></button-m>
-                    <button-m buttonText="Test"></button-m>
+                    <button-m context="TEST_RAMP" buttonText="Test"></button-m>
                     <button-m buttonText="Set styles"></button-m>
                 </div>
             </section>`
     }
     _handleChange = (e) => {
-        this.colorResults[e.detail.key].stop = e.detail.value;
+       
+        const event = new CustomEvent('colorThemeChange', {
+            bubbles: true,
+            composed: true,
+            detail: {value: e.target.value, key: null}
+          });
+        this.dispatchEvent(event);
     }
-    // _updateRampContrast = () => {
-    //     for (let i = 0; i < this.colorResults.length; i++ ) {
-    //         if (contrastColors.luminance(d3.rgb(this.colorResults[i].color).r, d3.rgb(this.colorResults[i].color).g, d3.rgb(this.colorResults[i].color).b) < 0.1848) {
-    //             this.contrastDisplay[i] = '#ffffff'
-    //           } else {
-    //             this.contrastDisplay[i] = '#000000'
-    //           }
-    //     }
-    // }
+    
 } 
 customElements.define('color-ramp', ColorRamp)

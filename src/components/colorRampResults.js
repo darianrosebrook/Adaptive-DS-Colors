@@ -86,13 +86,7 @@ class ColorRampResults extends LitElement {
             composed: true,
             detail: {value: e.target.value, key}
           });
-        const shouldDispatch = new CustomEvent('shouldDispatch', {
-            bubbles: true,
-            composed: true,
-            detail: true
-          });
           this.dispatchEvent(event);
-          this.dispatchEvent(shouldDispatch);
     }
 }
 customElements.define('color-results', ColorRampResults)

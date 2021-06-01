@@ -8,7 +8,8 @@ function updateColorRamp(entry, key) {
   return dispatch => {
   dispatch({ 
     type: colorRampConstants.UPDATE_COLOR_RAMP, 
-    entry 
+    entry,
+    key
   });
   }
 }

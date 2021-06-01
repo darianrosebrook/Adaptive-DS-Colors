@@ -2,21 +2,29 @@ import {colorRampConstants} from '../constants';
 import {createSelector } from 'reselect';
 
 const initialState = {
-  colorTheme: 'Neutral',
-  colorResults: [
-    {stop: 100, contrast: 1, color: '#FFFFFF'}
+  colorScheme: 'Neutral',
+  colorResults: [{
+      color: '#ffffff',
+      contrastDisplay: '#000000',
+      colorStop: '100',
+      contrastRatio: 1
+  }
   ],
 }
+let updateArray;
 
 
 export const colorRamp = (state = initialState, action) => {
   switch (action.type) {
     case colorRampConstants.UPDATE_COLOR_RAMP:
-      let newArray = [];
-      for(let i = 0; i < action.entry.colors.length; i++) {
-        newArray.push({stop: 100, contrast: action.entry.contrasts[i], color: action.entry.colors[i]})
+      let results = Object.assign({}, state)
+      if (action.key === null) {
+        results.colorScheme = action.entry;
+      } else {
+      updateArray = state.colorResults;
+      results.colorResults[action.key].colorStop = action.entry;
       }
-      return {...state, colorResults: newArray}
+      return results;
       break;
     default:
       return state;
