@@ -43,7 +43,7 @@ class ColorRamp extends LitElement{
         return html`
             <section>
                 
-            <div><h2>Color ramp</h2><tooltip-trigger></tooltip-trigger></div>
+            <div><h2>Color ramp</h2></div>
                 <div>
                     <input @change=${this._handleChange} type="text" placeholder="Name your color" />
                 </div>
@@ -53,7 +53,7 @@ class ColorRamp extends LitElement{
                 <div>
                     <button-m buttonText="Copy"></button-m>
                     <button-m context="TEST_RAMP" buttonText="Test"></button-m>
-                    <button-m buttonText="Set styles"></button-m>
+                    <button-m context="SET_STYLES" buttonText="Set styles"></button-m>
                 </div>
             </section>`
     }

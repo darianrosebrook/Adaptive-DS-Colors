@@ -26,22 +26,24 @@ class ContrastRatios extends LitElement {
     static get properties() {
         return {
             ratios: {type: Array},
+            colorResults: {type: Array}
         }
     }
     constructor() {
         super();
         this.ratios = [1.00];
+        this.colorResults = ['#FFFFFF']
     }
     render() {
         return html`
             <section>
                 <div class="grid">
                     <div>
-                        <div><h2>Contrast ratios</h2><tooltip-trigger></tooltip-trigger></div>
+                        <div><h2>Contrast ratios</h2></div>
                         <div class="button-container">
-                            <button-m context="SORT_RATIOS" ><svg-icon icon="sort"></svg-icon></button-m>
-                            <button-m context="DISTRIBUTE_RATIOS" ><svg-icon icon="distribute"></svg-icon></button-m>
-                            <button-m context="ADD_RATIOS" ><svg-icon icon="add"></svg-icon></button-m>
+                            <button-m title="Sort the ratios from small to large" context="SORT_RATIOS" ><svg-icon icon="sort"></svg-icon></button-m>
+                            <button-m title="Distribute contrast equally against the next color" context="DISTRIBUTE_RATIOS" ><svg-icon icon="distribute"></svg-icon></button-m>
+                            <button-m title="Add a new ratio to the list" context="ADD_RATIOS" ><svg-icon icon="add"></svg-icon></button-m>
                         </div>
                         
                         ${this.ratios.map((item, key) => {
@@ -52,7 +54,10 @@ class ContrastRatios extends LitElement {
                         <button-m buttonText="Clear all" context="CLEAR_RATIOS" ><svg-icon icon="clear"></svg-icon></button-m>
                     </div>
                     <div>
-                        <gradient-map></gradient-map>
+                        <gradient-map 
+                        .colors=${this.colorResults}
+                        .ratios=${this.ratios}
+                        ></gradient-map>
                     </div>
                 
                 </div>

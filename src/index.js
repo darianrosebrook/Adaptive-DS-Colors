@@ -49,7 +49,9 @@ function returnRatioCube(lum) {
       return 1;
     }
   }
-  
+onmessage = (event) => {
+    console.log("got this from the plugin code", event.data.pluginMessage)
+}
 
 class AdaptiveColors extends connect(store)(LitElement) {
     render() {
@@ -71,13 +73,14 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 <contrast-ratios 
                     @handleInputChange=${e => this._handleInputChange(e, 'CONTRAST_RATIO' )} 
                     @buttonClick=${this._handleClick} 
-                    .ratios=${this.state.contrastStops}
+                    .ratios=${[...this.state.contrastStops]}
+                    .colorResults=${[...this.state.colorRamp.colors]} 
                 ></contrast-ratios>
                 <color-ramp 
                     @buttonClick=${this._handleClick} 
                     @colorThemeChange=${e => this._handleInputChange(e, 'COLOR_RAMP')} 
-                    .colorResults=${this.state.colorRamp.colors} 
-                    .ratios=${this.state.contrastStops}
+                    .colorResults=${[...this.state.colorRamp.colors]} 
+                    .ratios=${[...this.state.contrastStops]}
                 ></color-ramp>
             </section>
             <!-- <reference-code></reference-code> -->
@@ -127,8 +130,9 @@ class AdaptiveColors extends connect(store)(LitElement) {
         this.state = {
             ...state
         }
-        console.log(state.colorRamp, this.state.colorRamp);
-
+        
+        this._applyColorsToState(this.state)
+        parent.postMessage({pluginMessage: {detail: {state: this.state, type: "SET_STATE"} }}, '*')
     }
 
     static get styles() {
@@ -157,8 +161,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
       
       }
     _generateNewColors = (state) => {
-        let newArray = [];
-        let newColors = contrastColors.generateContrastColors(
+        return contrastColors.generateContrastColors(
             {
                 colorKeys: state.keyColors,
                 base: state.baseColor,
@@ -166,26 +169,30 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 colorspace: state.colorSpace
             }
         );
-        for (let i = 0; i < newColors.length; i++ ) {
+    }
+    _applyColorsToState = (state) => {
+        let array = this._generateNewColors(state)
+        let newArray = [];
+        for (let i = 0; i < array.length; i++ ) {
             let contrastDisplay;
             let contrastRatio =  contrastColors.contrast(
-                [d3.rgb(newColors[i]).r, 
-                d3.rgb(newColors[i]).g, 
-                d3.rgb(newColors[i]).b], 
+                [d3.rgb(array[i]).r, 
+                d3.rgb(array[i]).g, 
+                d3.rgb(array[i]).b], 
                 [
                     d3.rgb(this.state.baseColor).r, 
                     d3.rgb(this.state.baseColor).g, 
                     d3.rgb(this.state.baseColor).b
                 ]
                 )
-            if (contrastColors.luminance(d3.rgb(newColors[i]).r, d3.rgb(newColors[i]).g, d3.rgb(newColors[i]).b) < 0.1848) {
+            if (contrastColors.luminance(d3.rgb(array[i]).r, d3.rgb(array[i]).g, d3.rgb(array[i]).b) < 0.1848) {
                 contrastDisplay = '#ffffff'
             } else {
                 contrastDisplay = '#000000'
             }
             newArray[i] = {
                 ...newArray[i], 
-                color: newColors[i],
+                color: array[i],
                 contrastRatio: contrastRatio.toFixed(2),
                 contrastDisplay,
             }
@@ -235,12 +242,14 @@ class AdaptiveColors extends connect(store)(LitElement) {
             default:
                 break;
         }
-        this._generateNewColors(this.state)
     }
     _executeAction = action => {
         console.log(`Start: ${action.context}`, action.key);
         switch (action.context) {
             case "TEST_RAMP": 
+                parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, type: action.context} }}, '*')
+                break
+            case "SET_STYLES": 
                 parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, type: action.context} }}, '*')
                 break
             case 'ADD_KEY_COLOR':
@@ -327,7 +336,6 @@ class AdaptiveColors extends connect(store)(LitElement) {
             default:
                 break;
         }
-        this._generateNewColors(this.state);
     }
     
 } 

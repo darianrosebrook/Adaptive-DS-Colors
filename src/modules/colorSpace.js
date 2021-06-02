@@ -42,7 +42,6 @@ class ColorSpace extends LitElement {
             </section>`
     }
     _handleChange = (e) => {
-        console.log(e.target.value);
         const event = new CustomEvent('handleInputChange', {
             bubbles: true,
             composed: true,

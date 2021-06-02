@@ -7,7 +7,7 @@ class ContrastStop extends LitElement {
         return html`
             <div class='grid'>
                 <input @change=${this._handleChange} type="number" placeholder="4.5" step='.01' min="1" max='21' .value="${this.contrastRatio.ratio}" />
-                <button-m context="REMOVE_RATIO" key=${this.contrastRatio.key}><svg-icon icon="clear"></svg-icon></button-m>
+                <button-m title="Remove this contrast stop" context="REMOVE_RATIO" key=${this.contrastRatio.key}><svg-icon icon="clear"></svg-icon></button-m>
             </div>
         `
     }

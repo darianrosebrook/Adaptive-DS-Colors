@@ -1,43 +1,35 @@
 import {LitElement, html, css} from 'lit';
-import { store } from '../redux/store.js';
-import { connect } from "pwa-helpers";
 import './icon'
 import styles from '../styles'
 
-class GradientMap extends connect(store)(LitElement) {
+class GradientMap extends LitElement {
   static get properties() {
     return {
       ratios: {type: Array},
-      keyColors: {type: Array},
-      baseColor: {type: String},
-      sortedRatios: {type: Array}
+      sortedColors: {type: Array},
+      colors: {type: Array}
     }
   }
   constructor() {
     super();
-    this.keyColors = ['#ffffff'];
+    this.colors = ['#ffffff'];
     this.ratios = [];
-    this.baseColor = '#ffffff'
-    this.sortedRatios = []
+    this.sortedRatios = [];
+    this.sortedColors = [];
   }
-  stateChanged(state) {
-      this.ratios = state.contrastStops;
-      this.keyColors = state.keyColors; 
-      this.baseColor = state.baseColor; 
-      this.sortedRatios = this.ratios;
-    }
   render() {
       return html`
          <div class="gradient-map" 
-              style="background: linear-gradient(
-                ${this.baseColor}, 
-                ${this.keyColors.join()}
+              .style="background: linear-gradient(
+                #FFFFFF,
+                ${this._sortColors()},
+                #000000
               )"
          >
          <div class="container">
-         ${this.sortedRatios.sort(function(a, b){return a-b}).map((item, key) => {
+         ${this.ratios.sort(function(a, b){return a-b}).map((item, key) => {
             return html`
-                <div class="contrast-stop" style="top: calc(((${item}/${this.ratios[this.ratios.length - 1]}) * 100%) - 12px);"></div>
+                <div class="contrast-stop" .style="top: calc(((${item}/${this.ratios[this.ratios.length - 1]}) * 100%) - 12px);"></div>
           `
           })} </div>
          </div>
@@ -74,6 +66,14 @@ class GradientMap extends connect(store)(LitElement) {
           }
       
       `];
+  }
+  _sortColors = () => {
+    let newColors = [];
+    for (let i = 0; i < this.colors.length; i++) {
+      newColors[i] = this.colors[i].color
+    }
+    this.sortedColors = newColors
+    return this.sortedColors.join()
   }
 }
 customElements.define('gradient-map', GradientMap)

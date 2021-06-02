@@ -32,12 +32,12 @@ class keyColors extends LitElement {
         return html`
             <section>
                 <div class="grid">
-                    <div><h2>Key colors</h2><tooltip-trigger></tooltip-trigger></div>
+                    <div><h2>Key colors</h2></div>
                     <div>
-                        <button-m context="ADD_KEY_COLOR" ><svg-icon icon="add"></svg-icon></button-m>
-                        <button-m context="BULK_KEY_COLOR" ><svg-icon icon="bulk"></svg-icon></button-m>
-                        <button-m context="CODE_KEY_COLORS" ><svg-icon icon="code"></svg-icon></button-m>
-                        <button-m context="CLEAR_KEY_COLORS" ><svg-icon icon="clear"></svg-icon></button-m>
+                        <button-m title="Add a new key color" context="ADD_KEY_COLOR" ><svg-icon icon="add"></svg-icon></button-m>
+                        <!-- <button-m context="BULK_KEY_COLOR" ><svg-icon icon="bulk"></svg-icon></button-m>
+                        <button-m context="CODE_KEY_COLORS" ><svg-icon icon="code"></svg-icon></button-m> -->
+                        <button-m title="Clear all key colors" context="CLEAR_KEY_COLORS" ><svg-icon icon="clear"></svg-icon></button-m>
                     </div>
                 </div>
                 <div class="colorGrid">
