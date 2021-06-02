@@ -45,7 +45,7 @@ class ColorRamp extends LitElement{
                 
             <div><h2>Color ramp</h2><tooltip-trigger></tooltip-trigger></div>
                 <div>
-                    <input @change=${this._handleChange} type="text" placeholder="Color Ramp / Red" />
+                    <input @change=${this._handleChange} type="text" placeholder="Name your color" />
                 </div>
                 <div>
                     <color-results  .ratios=${this.ratios} .colorResults=${this.colorResults} ></color-results>

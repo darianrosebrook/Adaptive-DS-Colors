@@ -42,7 +42,7 @@ class ColorRampResults extends LitElement {
             <div class="container">
                 <div class="inputs-container">
                 ${this.ratios.map((item, key) => {
-                        return html`<input @change=${e => this._handleChange(e, key)} type="text" placeholder="${(key + 1) * 100}" } />`})}
+                        return html`<input @change=${e => this._handleChange(e, key)} type="text" placeholder="${(key + 1) * 100}" } value="${(key + 1) * 100}" } />`})}
                     
                 </div>
                 
@@ -81,12 +81,12 @@ class ColorRampResults extends LitElement {
     }
     _handleChange(e, key) {
         this.stops[key] = e.target.value;
-        const event = new CustomEvent('colorStopChange', {
+        const event = new CustomEvent('colorThemeChange', {
             bubbles: true,
             composed: true,
             detail: {value: e.target.value, key}
           });
-          this.dispatchEvent(event);
+        this.dispatchEvent(event);
     }
 }
 customElements.define('color-results', ColorRampResults)

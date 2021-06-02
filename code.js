@@ -21,7 +21,7 @@ function newColorRamp(entries) {
     paddingRight: 0,
     paddingTop: 0,
     paddingBottom: 0,
-    name: entries.detail.ramp.colorScheme
+    name: `Color Ramp / ${entries.detail.ramp.colorScheme}`
   }
 
   Object.keys(parentProperties).map((item, key) => {
@@ -30,14 +30,13 @@ function newColorRamp(entries) {
   let children = [];
     entries.detail.ramp.colors.map((item, key) => {
       let rect = figma.createRectangle();
-      rect.name = `${entries.detail.ramp.colorScheme} ${item.colorStop}`
+      rect.name = `Color Ramp / ${entries.detail.ramp.colorScheme} ${entries.detail.ramp.colorStops[key]}`
       rect.fills = [{color: hexToRgb(item.color), type: 'SOLID'}]
       parent.insertChild(key, rect)
     })
   return parent;
 }
 figma.ui.onmessage = msg => {
-  console.log(msg);
   if (msg.detail.type === 'TEST_RAMP') {
     let ramp = newColorRamp(msg);
     figma.currentPage.selection = [ramp];

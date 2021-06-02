@@ -1,7 +1,7 @@
 import {LitElement, html, css} from 'lit';
 import { store } from './redux/store.js';
 import { connect } from "pwa-helpers";
-import { keyColorActions, baseColorActions, contrastRatioActions, colorRampActions } from './redux/actions';
+import { keyColorActions, baseColorActions, colorSpaceActions, contrastRatioActions, colorRampActions } from './redux/actions';
 import './modules/keyColors';
 import './modules/baseColor';
 import './modules/colorSpace';
@@ -54,88 +54,83 @@ function returnRatioCube(lum) {
 class AdaptiveColors extends connect(store)(LitElement) {
     render() {
         return html`<main>
-            <key-colors .keyColors=${[...this.inputs.keyColors]} @buttonClick=${this._handleClick} @handleInputChange=${e => this._handleInputChange(e, 'KEY_COLORS' )}></key-colors>
+            <key-colors 
+                .keyColors=${[...this.state.keyColors]}
+                @buttonClick=${this._handleClick}
+                @handleInputChange=${e => this._handleInputChange(e, 'KEY_COLORS' )}
+            ></key-colors>
             <section class="grid">
-                <base-color @handleInputChange=${e => this._handleInputChange(e, 'BASE_COLOR' )} .baseColor=${this.baseColor}></base-color>
-                <color-space @shouldDispatch=${this.updateRamp} .colorSpace=${this.inputs.colorSpace}></color-space>
-                <contrast-ratios @handleInputChange=${e => this._handleInputChange(e, 'CONTRAST_RATIO' )} @buttonClick=${this._handleClick} .ratios=${this.inputs.ratios}></contrast-ratios>
-                <color-ramp @buttonClick=${this._handleClick} @colorThemeChange=${e => this._handleInputChange(e, 'COLOR_RAMP')} @colorStopChange=${e => this._handleInputChange(e, 'COLOR_RAMP')} .colorResults=${this.ramp.colors} .ratios=${this.ramp.contrasts}></color-ramp>
+                <base-color 
+                    @handleInputChange=${e => this._handleInputChange(e, 'BASE_COLOR' )} 
+                    .baseColor=${this.baseColor}
+                ></base-color>
+                <color-space 
+                    @handleInputChange=${e => this._handleInputChange(e, 'COLOR_SPACE')}
+                    .colorSpace=${this.state.colorSpace}
+                ></color-space>
+                <contrast-ratios 
+                    @handleInputChange=${e => this._handleInputChange(e, 'CONTRAST_RATIO' )} 
+                    @buttonClick=${this._handleClick} 
+                    .ratios=${this.state.contrastStops}
+                ></contrast-ratios>
+                <color-ramp 
+                    @buttonClick=${this._handleClick} 
+                    @colorThemeChange=${e => this._handleInputChange(e, 'COLOR_RAMP')} 
+                    .colorResults=${this.state.colorRamp.colors} 
+                    .ratios=${this.state.contrastStops}
+                ></color-ramp>
             </section>
-            <reference-code></reference-code>
+            <!-- <reference-code></reference-code> -->
         </main>`
     }
     static get properties() {
         return {
-            inputs: {
+            state: {
                 keyColors: {type: Array},
                 baseColor: {type: String},
                 colorSpace: {type: String},
-                ratios: {type: Array},
-            }, 
-            results: {
-                colorScheme: {type: String},
-                colors: [{
-                    colorStop: {type: String},
-                    contrastDisplay: {type: String},
-                    contrastRatio: {type: Number},
-                    color: {type: String},
-                }],
-                contrasts: {type: Array}
-            }
+                contrastStops: {type: Array},
+                colorRamp: {
+                    colorScheme: {type: String},
+                    colors: [{
+                        contrastDisplay: {type: String},
+                        contrastRatio: {type: Number},
+                        color: {type: String},
+                    }],
+                    colorStops: {type: Array},
+                }
+            },
+            newColors: {type: Array}
+        
         }
     }
     constructor() {
         super();
-        this.ramp = {
-            colors: [{
-                color: '#ffffff',
-                contrastDisplay: '#000000',
-                colorStop: '100',
-                contrastRatio: 1
-            }],
-            contrasts: [1],
-            colorScheme: "Neutral"
-        }
-        this.inputs = {
+        this.state = {
+            colorRamp: {
+                colors: [{
+                    color: '#ffffff',
+                    contrastDisplay: '#000000',
+                    contrastRatio: 1
+                }],
+                colorScheme: "Neutral",
+                colorStops: ['100'],
+            },
+            contrastStops: [1],
             keyColors: ['#FFFFFF'],
             baseColor: '#FFFFFF',
             colorSpace: 'CAM02',
-            ratios: [1]
+            contrastStops: [1]
         }
-        this.initialized = false
     }
     stateChanged(state) {
-        console.log(state);
-        this.inputs = {
-            keyColors: [...state.keyColors],
-            baseColor: state.baseColor,
-            colorSpace: state.colorSpace,
-            ratios: [...state.contrastStops]
+        this.state = {
+            ...state
         }
-        this.ramp.contrasts = this.inputs.ratios;
-
-        let newColors = contrastColors.generateContrastColors({colorKeys: this.inputs.keyColors, base: this.inputs.baseColor, ratios: this.inputs.ratios, colorspace: this.inputs.colorSpace});
-        
-        for (let i = 0; i < newColors.length; i++ ) {
-            let contrastDisplay;
-            let colorStop = (i + 1) * 100;
-            let contrastRatio =  contrastColors.contrast([d3.rgb(newColors[i]).r, d3.rgb(newColors[i]).g, d3.rgb(newColors[i]).b], [d3.rgb(this.inputs.baseColor).r, d3.rgb(this.inputs.baseColor).g, d3.rgb(this.inputs.baseColor).b])
-            if (contrastColors.luminance(d3.rgb(newColors[i]).r, d3.rgb(newColors[i]).g, d3.rgb(newColors[i]).b) < 0.1848) {
-                contrastDisplay = '#ffffff'
-            } else {
-                contrastDisplay = '#000000'
-            }
-            newColors[i] = {
-                color: newColors[i],
-                contrastRatio: contrastRatio.toFixed(2),
-                contrastDisplay,
-                colorStop
-            }
-        }
-        this.ramp.colors = newColors
-        this.ramp.colorScheme = state.colorRamp.colorScheme;
+        console.log(state.colorRamp, this.state.colorRamp);
 
     }
+
     static get styles() {
         return css `
         .grid {
@@ -144,11 +139,59 @@ class AdaptiveColors extends connect(store)(LitElement) {
             gap: 24px;
         }`;
     }
-    updateRamp = () => {
-        store.dispatch(
-            colorRampActions.updateColorRamp(this.ramp)
-        )
+
+
+    _handleClick = e => {
+        this._executeAction(e.detail);
     }
+    _distribute = () => {
+        let sorted = this.state.contrastStops.sort(function(a, b){return a-b});
+        let colorArray = this.state.colorRamp.colors.map(item => {
+            return item.color
+        })
+        let lums = interpolateLumArray(colorArray)
+        for(let i=1; i<lums.length -1; i++) {
+        sorted[i] = returnRatioCube(lums[i]).toFixed(2);
+        }
+        
+      
+      }
+    _generateNewColors = (state) => {
+        let newArray = [];
+        let newColors = contrastColors.generateContrastColors(
+            {
+                colorKeys: state.keyColors,
+                base: state.baseColor,
+                ratios: state.contrastStops,
+                colorspace: state.colorSpace
+            }
+        );
+        for (let i = 0; i < newColors.length; i++ ) {
+            let contrastDisplay;
+            let contrastRatio =  contrastColors.contrast(
+                [d3.rgb(newColors[i]).r, 
+                d3.rgb(newColors[i]).g, 
+                d3.rgb(newColors[i]).b], 
+                [
+                    d3.rgb(this.state.baseColor).r, 
+                    d3.rgb(this.state.baseColor).g, 
+                    d3.rgb(this.state.baseColor).b
+                ]
+                )
+            if (contrastColors.luminance(d3.rgb(newColors[i]).r, d3.rgb(newColors[i]).g, d3.rgb(newColors[i]).b) < 0.1848) {
+                contrastDisplay = '#ffffff'
+            } else {
+                contrastDisplay = '#000000'
+            }
+            newArray[i] = {
+                ...newArray[i], 
+                color: newColors[i],
+                contrastRatio: contrastRatio.toFixed(2),
+                contrastDisplay,
+            }
+        }
+        state.colorRamp.colors = newArray;
+    }    
     _handleInputChange = (e, changeType) => {
         switch (changeType) {
             case 'KEY_COLORS':
@@ -166,7 +209,13 @@ class AdaptiveColors extends connect(store)(LitElement) {
                     )
                 )
                 break;
-        
+            case 'COLOR_SPACE':
+                store.dispatch(
+                    colorSpaceActions.updateColorSpace(
+                        e.detail
+                    )
+                )
+                break
             case 'CONTRAST_RATIO':
                 store.dispatch(
                     contrastRatioActions.updateStop(
@@ -176,10 +225,9 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 break;
         
             case 'COLOR_RAMP':
-                console.log(e.detail.key);
                 store.dispatch(
                     colorRampActions.updateColorRamp(
-                        e.detail.value, e.detail.key
+                       e.detail.value, e.detail.key
                     )
                 )
                 break;
@@ -187,38 +235,18 @@ class AdaptiveColors extends connect(store)(LitElement) {
             default:
                 break;
         }
+        this._generateNewColors(this.state)
     }
-    _handleKeyColorChange = (e) => {
-    }
-    _handleRatioInputChange = (e) => {
-    }
-    _handleClick = e => {
-        this._executeAction(e.detail);
-    }
-    _distribute = () => {
-        let sorted = this.inputs.ratios.sort(function(a, b){return a-b});
-        let colorArray = this.ramp.colors.map(item => {
-            return item.color
-        })
-        console.log(colorArray)
-        let lums = interpolateLumArray(colorArray)
-        for(let i=1; i<lums.length -1; i++) {
-        sorted[i] = returnRatioCube(lums[i]).toFixed(2);
-        }
-        
-      
-      }
     _executeAction = action => {
         console.log(`Start: ${action.context}`, action.key);
         switch (action.context) {
             case "TEST_RAMP": 
-                console.log(this.ramp);
-                parent.postMessage({pluginMessage: {detail: {ramp: this.ramp, type: action.context} }}, '*')
+                parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, type: action.context} }}, '*')
                 break
             case 'ADD_KEY_COLOR':
                 store.dispatch(
                     keyColorActions.addNewColor(
-                        this.inputs.keyColors[this.inputs.keyColors.length - 1],
+                        this.state.keyColors[this.state.keyColors.length - 1],
                     )
                 )
                 break;
@@ -234,35 +262,44 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 )
                 break;
             case 'ADD_RATIOS':
-                let stopToAdd = 
-                this.inputs.ratios[this.inputs.ratios.length - 1] < 21 ? 
-                this.inputs.ratios[this.inputs.ratios.length - 1] + 1 :
-                21;
+                let stopToAdd;
+                if (this.state.contrastStops[this.state.contrastStops.length - 1] == undefined) {
+                    stopToAdd = 1
+                } else if (this.state.contrastStops[this.state.contrastStops.length - 1] < 21) {
+                    stopToAdd = this.state.contrastStops[this.state.contrastStops.length - 1] + 1  
+                }else {
+                    stopToAdd = 21
+                }
                 store.dispatch(
                     contrastRatioActions.addNewStop(
                         stopToAdd
+                    )
+                )
+                store.dispatch(
+                    colorRampActions.addColorStop(
+                        this.state.contrastStops.length
                     )
                 )
                 break;
             case 'SORT_RATIOS':
                 store.dispatch(
                     contrastRatioActions.updateRatios(
-                        this.inputs.ratios.sort(function(a, b){return a-b})
+                        this.state.contrastStops.sort(function(a, b){return a-b})
                         )
                 )
                 break;
             case 'DISTRIBUTE_RATIOS':
-                let sorted = this.inputs.ratios.sort(function(a, b){return a-b});
+                let sorted = this.state.contrastStops.sort(function(a, b){return a-b});
                 store.dispatch(
                     contrastRatioActions.updateRatios(
-                        this.inputs.ratios.sort(function(a, b){return a-b})
+                        this.state.contrastStops.sort(function(a, b){return a-b})
                         )
                 )
                 this._distribute()
                 
                 store.dispatch(
                     contrastRatioActions.updateRatios(
-                        this.inputs.ratios
+                        this.state.contrastStops
                         )
                 )
                 break;
@@ -270,11 +307,19 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 store.dispatch(
                     contrastRatioActions.clearContrastStops(1)
                 )
+                store.dispatch(
+                    colorRampActions.clearColorStops()
+                )
                 break;
             case 'REMOVE_RATIO': {
                 store.dispatch(
                     contrastRatioActions.clearStopItem(
-                        this.inputs.ratios[action.key], action.key
+                        this.state.contrastStops[action.key], action.key
+                    )
+                )
+                store.dispatch(
+                    colorRampActions.clearColorStopItem(
+                        action.key
                     )
                 )
                 break;
@@ -282,6 +327,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
             default:
                 break;
         }
+        this._generateNewColors(this.state);
     }
     
 } 

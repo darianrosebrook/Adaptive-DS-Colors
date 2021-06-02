@@ -1,9 +1,6 @@
 import {LitElement, html, css} from 'lit';
-import { store } from '../redux/store.js';
-import { connect } from "pwa-helpers";
-import { colorSpaceActions } from '../redux/actions';
 import styles from '../styles'
-class ColorSpace extends connect(store)(LitElement) {
+class ColorSpace extends LitElement {
     static get styles() {
         return [
             styles,
@@ -26,9 +23,6 @@ class ColorSpace extends connect(store)(LitElement) {
         super();
         this.colorSpace = ''
     }
-    stateChanged(state) {
-        this.colorSpace = state.colorSpace
-    }
     render() {
         return html`
             <section>
@@ -48,17 +42,13 @@ class ColorSpace extends connect(store)(LitElement) {
             </section>`
     }
     _handleChange = (e) => {
-        const shouldDispatch = new CustomEvent('shouldDispatch', {
+        console.log(e.target.value);
+        const event = new CustomEvent('handleInputChange', {
             bubbles: true,
             composed: true,
-            detail: true
+            detail: e.target.value
           });
-          this.dispatchEvent(shouldDispatch);
-        store.dispatch(
-            colorSpaceActions.updateColorSpace(
-                e.target.value
-            )
-        )
+          this.dispatchEvent(event);
     }
 } 
 customElements.define('color-space', ColorSpace)

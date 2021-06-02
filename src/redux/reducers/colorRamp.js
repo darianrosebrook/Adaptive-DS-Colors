@@ -3,29 +3,44 @@ import {createSelector } from 'reselect';
 
 const initialState = {
   colorScheme: 'Neutral',
-  colorResults: [{
+  colors: [{
       color: '#ffffff',
       contrastDisplay: '#000000',
-      colorStop: '100',
       contrastRatio: 1
   }
   ],
+  colorStops: ['100'],
 }
 let updateArray;
 
 
 export const colorRamp = (state = initialState, action) => {
+  let newColorRamp;
+  let newArray = [...state.colorStops];
   switch (action.type) {
     case colorRampConstants.UPDATE_COLOR_RAMP:
-      let results = Object.assign({}, state)
       if (action.key === null) {
-        results.colorScheme = action.entry;
+        newColorRamp = {...state, colorScheme: action.entry}
       } else {
-      updateArray = state.colorResults;
-      results.colorResults[action.key].colorStop = action.entry;
+      newArray[action.key] = action.entry
+      newColorRamp = {...state, colorStops: newArray};
       }
-      return results;
+      return newColorRamp;
       break;
+    case colorRampConstants.ADD_COLOR_STOP:
+      newArray[action.entry - 1] = action.entry * 100;
+      newColorRamp = {...state, colorStops: newArray};
+      return newColorRamp;
+      break;
+    case colorRampConstants.CLEAR_STOP_ITEM:
+      newArray.splice(action.key, 1);
+      newColorRamp = {...state, colorStops: newArray};
+      return newColorRamp;
+      break
+    case colorRampConstants.CLEAR_STOPS_LIST:
+      newColorRamp = {...state, colorStops: ['100']};
+      return newColorRamp;
+      break
     default:
       return state;
       break;
