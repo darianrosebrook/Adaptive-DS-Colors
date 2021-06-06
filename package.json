@@ -5,7 +5,7 @@
   "main": "code.js",
   "scripts": {
     "build": "rollup -c",
-    "watch": "rollup -c -w",
+    "watch": " rollup -c -w",
     "dev": "npm-run-all --parallel start watch"
   },
   "author": "",
@@ -23,6 +23,7 @@
     "rollup-plugin-minify-html-literals": "^1.2.6"
   },
   "devDependencies": {
+    "@figma/plugin-typings": "^1.23.0",
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
     "@rollup/plugin-replace": "^2.4.2",

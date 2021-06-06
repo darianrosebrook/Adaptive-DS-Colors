@@ -15,6 +15,8 @@ import * as d3hsluv from 'd3-hsluv';
 import * as d3hsv from 'd3-hsv';
 const d3 = Object.assign({}, d3start, d3cam02,d3hsluv,d3hsv);
 
+let initialState;
+
 function interpolateLumArray(array) {
     let lums = [];
     for(let i=0; i<array.length; i++) {
@@ -49,10 +51,25 @@ function returnRatioCube(lum) {
       return 1;
     }
   }
+const createQueryString = (data) => {
+    return Object.keys(data).map(key => {
+        let val = data[key]
+        if (val !== null && typeof val === 'object') val = createQueryString(val)
+        return `${key}=${encodeURIComponent(`${val}`.replace(/\s/g, '_'))}`
+    }).join('&')
+}
 onmessage = (event) => {
     console.log("got this from the plugin code", event.data.pluginMessage)
+    switch (event.data.pluginMessage.type) {
+        case 'INITIAL_STYLES':
+            break;
+        case 'INITIAL_STATE':
+            initialState = event.data.pluginMessage.payload;
+            break
+        default:
+            break;
+    }
 }
-
 class AdaptiveColors extends connect(store)(LitElement) {
     render() {
         return html`<main>
@@ -83,7 +100,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
                     .ratios=${[...this.state.contrastStops]}
                 ></color-ramp>
             </section>
-            <!-- <reference-code></reference-code> -->
+            <!-- <reference-code .referenceCode=${this.referenceCode}></reference-code> -->
         </main>`
     }
     static get properties() {
@@ -103,8 +120,8 @@ class AdaptiveColors extends connect(store)(LitElement) {
                     colorStops: {type: Array},
                 }
             },
-            newColors: {type: Array}
-        
+            newColors: {type: Array},
+            referenceCode: {type: String}
         }
     }
     constructor() {
@@ -130,8 +147,8 @@ class AdaptiveColors extends connect(store)(LitElement) {
         this.state = {
             ...state
         }
-        
         this._applyColorsToState(this.state)
+        this.referenceCode = createQueryString(this.state);
         parent.postMessage({pluginMessage: {detail: {state: this.state, type: "SET_STATE"} }}, '*')
     }
 
@@ -247,10 +264,10 @@ class AdaptiveColors extends connect(store)(LitElement) {
         console.log(`Start: ${action.context}`, action.key);
         switch (action.context) {
             case "TEST_RAMP": 
-                parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, type: action.context} }}, '*')
+                parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, referenceCode: null, type: action.context} }}, '*')
                 break
             case "SET_STYLES": 
-                parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, type: action.context} }}, '*')
+                parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, referenceCode: null, type: action.context} }}, '*')
                 break
             case 'ADD_KEY_COLOR':
                 store.dispatch(
