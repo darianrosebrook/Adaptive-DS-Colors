@@ -96,8 +96,8 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 <color-ramp 
                     @buttonClick=${this._handleClick} 
                     @colorThemeChange=${e => this._handleInputChange(e, 'COLOR_RAMP')} 
-                    .colorResults=${[...this.state.colorRamp.colors]} 
-                    .ratios=${[...this.state.contrastStops]}
+                    .colorRamp=${this.state.colorRamp} 
+                    .contrastStops=${[...this.state.contrastStops]}
                 ></color-ramp>
             </section>
             <!-- <reference-code .referenceCode=${this.referenceCode}></reference-code> -->
@@ -144,6 +144,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
         }
     }
     stateChanged(state) {
+        console.log(state);
         this.state = {
             ...state
         }
@@ -339,15 +340,16 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 break;
             case 'REMOVE_RATIO': {
                 store.dispatch(
+                    colorRampActions.clearColorStopItem(
+                        this.state.colorRamp.colorStops[action.key], action.key
+                    )
+                )
+                store.dispatch(
                     contrastRatioActions.clearStopItem(
                         this.state.contrastStops[action.key], action.key
                     )
                 )
-                store.dispatch(
-                    colorRampActions.clearColorStopItem(
-                        action.key
-                    )
-                )
+                
                 break;
             }
             default:

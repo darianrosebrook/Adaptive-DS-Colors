@@ -41,17 +41,17 @@ class ColorRampResults extends LitElement {
         return html`
             <div class="container">
                 <div class="inputs-container">
-                ${this.ratios.map((item, key) => {
-                        return html`<input @change=${e => this._handleChange(e, key)} type="text" placeholder="${(key + 1) * 100}" } value="${(key + 1) * 100}" } />`})}
+                ${this.contrastStops.map((item, key) => {
+                        return html`<input @change=${e => this._handleChange(e, key)} type="text" placeholder="${(key + 1) * 100}" } value="${this.colorRamp.colorStops[key]}" } />`})}
                     
                 </div>
                 
                 <div class="ramp-results">
                     
-                ${this.ratios.map((item, key) => {
+                ${this.contrastStops.map((item, key) => {
                     return html`
-                        <div class="ramp-item" .style=${`color: ${this.colorResults[key].contrastDisplay};background: ${this.colorResults[key].color}`} >
-                            <p>${this.colorResults[key].contrastRatio}</p><p>${this.colorResults[key].color}</p>
+                        <div class="ramp-item" .style=${`color: ${this.colorRamp.colors[key].contrastDisplay};background: ${this.colorRamp.colors[key].color}`} >
+                            <p>${this.colorRamp.colors[key].contrastRatio}</p><p>${this.colorRamp.colors[key].color}</p>
                         </div>
                     `})}
                 </div>
@@ -61,26 +61,25 @@ class ColorRampResults extends LitElement {
     }
     static get properties() {
         return {
-            ratios: {type: Array },
-            colorResults: [
-                {
-                    colorStop: {type: String},
-                    contrastDisplay: {type: String},
-                    contrastRatio: {type: Number},
-                    color: {type: String},
-                }
-            ],
-            stops: {type: Array}
+            contrastStops: {type: Array },
+            colorResults: {
+                colorScheme: {type: String},
+                colors: [
+                    {
+                        contrastDisplay: {type: String},
+                        contrastRatio: {type: Number},
+                        color: {type: String},
+                    }
+                ],
+                colorStops: {type: Array}
+            }
         }
     }
     constructor() {
         super();
-        this.ratios = [1];
-        this.stops = ['100'];
-        this.colorResults = [];
     }
     _handleChange(e, key) {
-        this.stops[key] = e.target.value;
+        this.colorRamp.colorStops[key] = e.target.value;
         const event = new CustomEvent('colorThemeChange', {
             bubbles: true,
             composed: true,

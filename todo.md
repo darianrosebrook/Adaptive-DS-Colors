@@ -17,3 +17,6 @@
 --- Color swatch, named to the color style, 256 X 128, 4px rounded corner
 --- color name and stop, text node 
 --- color hex code  -->
+
+<!-- Removing a swatch
+- when removing a swatch, the color stop name isn't synced anymore. -->

@@ -16,28 +16,32 @@ class ColorRamp extends LitElement{
     }
     static get properties() {
         return {
-            ratios: {type: Array},
-            colorResults: [
-                {
-                    colorStop: {type: String},
-                    contrastDisplay: {type: String},
-                    contrastRatio: {type: Number},
-                    color: {type: String},
-                }
-            ]
+            contrastStops: {type: Array},
+            colorResults: {
+                colorScheme: {type: String},
+                colors: [
+                    {
+                        contrastDisplay: {type: String},
+                        contrastRatio: {type: Number},
+                        color: {type: String},
+                    }
+                ],
+                colorStops: {type: Array}
+            }
         }
     }
     constructor() {
         super();
-        this.ratios = [1.00];
-        this.colorResults = [
-            {
-                colorStop: '100',
-                contrastRatio: 1.00,
-                color: '#FFFFFF',
-                contrastDisplay: '#000000'
-            }
-        ]
+        this.contrastStops = [1.00];
+        this.colorRamp = {
+            colors: [{
+                color: '#ffffff',
+                contrastDisplay: '#000000',
+                contrastRatio: 1
+            }],
+            colorScheme: "Neutral",
+            colorStops: ['100'],
+        }
     }
     render() {
         return html`
@@ -48,7 +52,7 @@ class ColorRamp extends LitElement{
                     <input @change=${this._handleChange} type="text" placeholder="Name your color" />
                 </div>
                 <div>
-                    <color-results  .ratios=${this.ratios} .colorResults=${this.colorResults} ></color-results>
+                    <color-results  .contrastStops=${this.contrastStops} .colorRamp=${this.colorRamp} ></color-results>
                 </div>
                 <div>
                     <button-m buttonText="Copy"></button-m>

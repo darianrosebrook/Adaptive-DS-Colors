@@ -163,13 +163,16 @@ async function main() {
 
       let hexCode = createNewText(item.color);
       let colorName = createNewText(`${colorScheme} ${name}`);
+      colorName.fontSize = 16;
+      let contrastRatioText = createNewText(`${item.contrastRatio} : 1`)
       rect.name = `Color Ramp / ${colorScheme} / ${colorScheme} ${name}`;
       rect.fills = [{color: hexToRgb(item.color), type: 'SOLID'}];
       
-      [hexCode,colorName].map(item => {
+      [hexCode,contrastRatioText].map(item => {
         textContainer.insertChild(0, item);
       })
       container.insertChild(0, textContainer)
+      container.insertChild(0, colorName)
       container.insertChild(0, rect)
       
       parent.appendChild(container)
