@@ -93,6 +93,7 @@ async function main() {
       style.paints = [solidPaint];
     })
 
+      figma.notify(`Set ${entries.colors.length} styles 🥳`)
   }
 
   function newColorRamp(entries) {
@@ -106,7 +107,7 @@ async function main() {
     let parentProperties = {
       layoutMode: "VERTICAL",
       fills: [],
-      itemSpacing: 24,
+      itemSpacing: 32,
       paddingLeft: 0,
       paddingRight: 0,
       paddingTop: 0,
@@ -117,7 +118,7 @@ async function main() {
     }, containerProperties = {
       layoutMode: "VERTICAL",
       fills: [],
-      itemSpacing: 12,
+      itemSpacing: 8,
       paddingLeft: 0,
       paddingRight: 0,
       paddingTop: 0,
@@ -189,7 +190,6 @@ async function main() {
     }
     if (msg.detail.type === 'SET_STYLES') {
       createFillStyles(msg.detail.ramp)
-      // figma.notify(`Set ${'# of styles'} styles 🥳`)
     }
     
   }

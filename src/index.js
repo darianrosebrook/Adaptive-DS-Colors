@@ -211,7 +211,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
             newArray[i] = {
                 ...newArray[i], 
                 color: array[i],
-                contrastRatio: contrastRatio.toFixed(2),
+                contrastRatio: Math.abs(contrastRatio.toFixed(2)),
                 contrastDisplay,
             }
         }
