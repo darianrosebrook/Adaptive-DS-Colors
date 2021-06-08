@@ -2,6 +2,7 @@ import {LitElement, html, css} from 'lit';
 import { store } from './redux/store.js';
 import { connect } from "pwa-helpers";
 import { keyColorActions, baseColorActions, colorSpaceActions, contrastRatioActions, colorRampActions } from './redux/actions';
+import { param } from "can";
 import './modules/keyColors';
 import './modules/baseColor';
 import './modules/colorSpace';
@@ -51,12 +52,49 @@ function returnRatioCube(lum) {
       return 1;
     }
   }
-const createQueryString = (data) => {
-    return Object.keys(data).map(key => {
-        let val = data[key]
-        if (val !== null && typeof val === 'object') val = createQueryString(val)
-        return `${key}=${encodeURIComponent(`${val}`.replace(/\s/g, '_'))}`
-    }).join('&')
+const objectToQueryString = (data) => {
+    let a = Object.assign({}, data)
+    delete a.colorRamp
+    var prefix, s, add, name, r20, output;
+    s = [];
+    r20 = /%20/g;
+    add = function (key, value) {
+        // If value is a function, invoke it and return its value
+        value = ( typeof value == 'function' ) ? value() : ( value == null ? "" : value );
+        s[ s.length ] = encodeURIComponent(key) + "=" + encodeURIComponent(value);
+    };
+    if (a instanceof Array) {
+        for (name in a) {
+            add(name, a[name]);
+        }
+    } else {
+        for (prefix in a) {
+            buildParams(prefix, a[ prefix ], add);
+        }
+    }
+    output = s.join("&").replace(r20, "+");
+    return output;
+};
+const buildParams = (prefix, obj, add) => {
+    var name, i, l, rbracket;
+    rbracket = /\[\]$/;
+    if (obj instanceof Array) {
+        for (i = 0, l = obj.length; i < l; i++) {
+            if (rbracket.test(prefix)) {
+                add(prefix, obj[i]);
+            } else {
+                buildParams(prefix + "[" + ( typeof obj[i] === "object" ? i : "" ) + "]", obj[i], add);
+            }
+        }
+    } else if (typeof obj == "object") {
+        // Serialize object item.
+        for (name in obj) {
+            buildParams(prefix + "[" + name + "]", obj[ name ], add);
+        }
+    } else {
+        // Serialize scalar item.
+        add(prefix, obj);
+    }
 }
 onmessage = (event) => {
     console.log("got this from the plugin code", event.data.pluginMessage)
@@ -77,6 +115,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 .keyColors=${[...this.state.keyColors]}
                 @buttonClick=${this._handleClick}
                 @handleInputChange=${e => this._handleInputChange(e, 'KEY_COLORS' )}
+                @addColorsToKeys=${e => this._handleInputChange(e, 'BULK_STATE_CHANGE')}
             ></key-colors>
             <section class="grid">
                 <base-color 
@@ -100,7 +139,10 @@ class AdaptiveColors extends connect(store)(LitElement) {
                     .contrastStops=${[...this.state.contrastStops]}
                 ></color-ramp>
             </section>
-            <!-- <reference-code .referenceCode=${this.referenceCode}></reference-code> -->
+            <reference-code
+                    @buttonClick=${this._handleClick} 
+                    .referenceCode=${this.referenceCode}
+            ></reference-code>
         </main>`
     }
     static get properties() {
@@ -144,12 +186,11 @@ class AdaptiveColors extends connect(store)(LitElement) {
         }
     }
     stateChanged(state) {
-        console.log(state);
         this.state = {
             ...state
         }
         this._applyColorsToState(this.state)
-        this.referenceCode = createQueryString(this.state);
+        this.referenceCode = objectToQueryString(this.state);
         parent.postMessage({pluginMessage: {detail: {state: this.state, type: "SET_STATE"} }}, '*')
     }
 
@@ -219,6 +260,15 @@ class AdaptiveColors extends connect(store)(LitElement) {
     }    
     _handleInputChange = (e, changeType) => {
         switch (changeType) {
+            case 'BULK_STATE_CHANGE':
+                let obj = buildParams(e.detail.value)
+                const urlParams = new URLSearchParams(e.detail.value);
+                const entries = urlParams.entries(); //returns an iterator of decoded [key,value] tuples
+                const params = paramsToObject(entries); //{abc:"foo",def:"[asf]",xyz:"5"}
+                // let obj = Object.fromEntries(new URLSearchParams(e.detail.value));
+                console.log(params);
+
+                break;
             case 'KEY_COLORS':
                 store.dispatch(
                     keyColorActions.updateColor(
@@ -226,7 +276,6 @@ class AdaptiveColors extends connect(store)(LitElement) {
                     )
                 )
                 break;
-        
             case 'BASE_COLOR':
                 store.dispatch(
                     baseColorActions.updateColor(
@@ -270,6 +319,9 @@ class AdaptiveColors extends connect(store)(LitElement) {
             case "SET_STYLES": 
                 parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, referenceCode: null, type: action.context} }}, '*')
                 break
+            case "COPY_REFERENCE_CODE":
+                
+                break
             case 'ADD_KEY_COLOR':
                 store.dispatch(
                     keyColorActions.addNewColor(
@@ -279,6 +331,13 @@ class AdaptiveColors extends connect(store)(LitElement) {
                 break;
             case 'BULK_KEY_COLOR':
                 console.log('Execute BULK');
+                break;
+            case 'REMOVE_KEY_COLOR': 
+                store.dispatch(
+                    keyColorActions.clearColorItem(
+                        this.state.keyColors[action.key], action.key
+                    )
+                )
                 break;
             case 'CODE_KEY_COLORS':
                 console.log('Execute CODE');
@@ -338,7 +397,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
                     colorRampActions.clearColorStops()
                 )
                 break;
-            case 'REMOVE_RATIO': {
+            case 'REMOVE_RATIO':
                 store.dispatch(
                     colorRampActions.clearColorStopItem(
                         this.state.colorRamp.colorStops[action.key], action.key
@@ -349,9 +408,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
                         this.state.contrastStops[action.key], action.key
                     )
                 )
-                
                 break;
-            }
             default:
                 break;
         }

@@ -1,5 +1,4 @@
 import { keyColorConstants } from "../constants";
-// import { nanoid } from 'nanoid';
 export const keyColorActions = {
   addNewColor,
   updateColor,
@@ -13,7 +12,6 @@ function addNewColor(entry) {
   return dispatch => {
   dispatch({ 
     type: keyColorConstants.NEW_COLOR, 
-    // entryId: nanoid(),
     entry 
   });
   }

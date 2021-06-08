@@ -10,6 +10,7 @@ class Button extends LitElement {
             button {
                 display: inline-grid;
                 align-items: center;
+                min-height: 3rem;
             }
         `]
     }

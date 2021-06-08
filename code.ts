@@ -169,12 +169,14 @@ async function main() {
       rect.name = `Color Ramp / ${colorScheme} / ${colorScheme} ${name}`;
       rect.fills = [{color: hexToRgb(item.color), type: 'SOLID'}];
       
-      [hexCode,contrastRatioText].map(item => {
+      childrenToPush = [contrastRatioText,hexCode]
+      childrenToPush.map(item => {
         textContainer.insertChild(0, item);
       })
-      container.insertChild(0, textContainer)
-      container.insertChild(0, colorName)
-      container.insertChild(0, rect)
+      childrenToPush = [textContainer, rect, colorName]
+      childrenToPush.map(item => {
+        container.insertChild(0, item);
+      })
       
       parent.appendChild(container)
     })

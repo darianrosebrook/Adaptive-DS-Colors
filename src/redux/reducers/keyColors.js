@@ -25,14 +25,9 @@ export const keyColors = (state = initialState, action) => {
     //   };
     //   break;
     case keyColorConstants.CLEAR_COLOR_ITEM:
-      const result = {
-        ...state,
-        keyColors: {
-          ...state.keyColors,
-        },
-      };
-      delete result.keyColors[action.entryId];
-      return result;
+      state.splice(action.key, 1);
+
+      return state.length < 1 ? ['#ffffff'] : [...state];
       break
     case keyColorConstants.CLEAR_COLOR_LIST:
       return [action.entry];
