@@ -2,7 +2,6 @@ import {LitElement, html, css} from 'lit';
 import { store } from './redux/store.js';
 import { connect } from "pwa-helpers";
 import { keyColorActions, baseColorActions, colorSpaceActions, contrastRatioActions, colorRampActions } from './redux/actions';
-import { param } from "can";
 import './modules/keyColors';
 import './modules/baseColor';
 import './modules/colorSpace';
@@ -15,8 +14,6 @@ import * as d3cam02 from 'd3-cam02';
 import * as d3hsluv from 'd3-hsluv';
 import * as d3hsv from 'd3-hsv';
 const d3 = Object.assign({}, d3start, d3cam02,d3hsluv,d3hsv);
-
-let initialState;
 
 function interpolateLumArray(array) {
     let lums = [];
@@ -52,49 +49,58 @@ function returnRatioCube(lum) {
       return 1;
     }
   }
-const objectToQueryString = (data) => {
-    let a = Object.assign({}, data)
-    delete a.colorRamp
-    var prefix, s, add, name, r20, output;
-    s = [];
-    r20 = /%20/g;
-    add = function (key, value) {
-        // If value is a function, invoke it and return its value
-        value = ( typeof value == 'function' ) ? value() : ( value == null ? "" : value );
-        s[ s.length ] = encodeURIComponent(key) + "=" + encodeURIComponent(value);
-    };
-    if (a instanceof Array) {
-        for (name in a) {
-            add(name, a[name]);
+  let setReferenceCode = (keyColors, background, ratios, colorSpace, colorScheme, colorStops) => {
+    let params = new URLSearchParams();
+  
+    params.set('colorKeys', keyColors);
+    params.set('base', background.substring(1));
+    params.set('ratios', ratios);
+    params.set('mode', colorSpace);
+    params.set('colorScheme', colorScheme);
+    params.set('colorStops', colorStops);
+    return params;
+  }
+let getParams = (refCode) => {
+    let params = new URLSearchParams(refCode);
+    let keyColors, colorStops;
+    if(params.has('colorKeys')) {
+        let cr = params.get('colorKeys');
+        keyColors = cr.split(',');
+    
+        if(keyColors[0] == 0) {
+          keyColors = ['#707070'];
         }
-    } else {
-        for (prefix in a) {
-            buildParams(prefix, a[ prefix ], add);
-        }
+      }
+    if(params.has('colorStops')) {
+        let cs = params.get('colorStops');
+        colorStops = cs.split(',');
     }
-    output = s.join("&").replace(r20, "+");
-    return output;
-};
-const buildParams = (prefix, obj, add) => {
-    var name, i, l, rbracket;
-    rbracket = /\[\]$/;
-    if (obj instanceof Array) {
-        for (i = 0, l = obj.length; i < l; i++) {
-            if (rbracket.test(prefix)) {
-                add(prefix, obj[i]);
-            } else {
-                buildParams(prefix + "[" + ( typeof obj[i] === "object" ? i : "" ) + "]", obj[i], add);
-            }
-        }
-    } else if (typeof obj == "object") {
-        // Serialize object item.
-        for (name in obj) {
-            buildParams(prefix + "[" + name + "]", obj[ name ], add);
-        }
-    } else {
-        // Serialize scalar item.
-        add(prefix, obj);
-    }
+      let baseColor;
+      if(params.has('base')) {
+        baseColor = '#' + params.get('base');
+      }
+      let contrastStops;
+      if(params.has('ratios')) {
+        // transform parameter values into array of numbers
+        let rat = params.get('ratios');
+        contrastStops = rat.split(',');
+        contrastStops = contrastStops.map(Number);
+      }
+      let colorSpace, colorScheme;
+      if(params.has('mode')) {
+        colorSpace = params.get('mode');
+      }
+      if(params.has('colorScheme')) {
+        colorScheme = params.get('colorScheme');
+      }
+      return {
+          keyColors,
+          baseColor,
+          contrastStops,
+          colorSpace,
+          colorScheme,
+          colorStops,
+      }
 }
 onmessage = (event) => {
     console.log("got this from the plugin code", event.data.pluginMessage)
@@ -120,7 +126,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
             <section class="grid">
                 <base-color 
                     @handleInputChange=${e => this._handleInputChange(e, 'BASE_COLOR' )} 
-                    .baseColor=${this.baseColor}
+                    .baseColor=${this.state.baseColor}
                 ></base-color>
                 <color-space 
                     @handleInputChange=${e => this._handleInputChange(e, 'COLOR_SPACE')}
@@ -141,7 +147,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
             </section>
             <reference-code
                     @buttonClick=${this._handleClick} 
-                    .referenceCode=${this.referenceCode}
+                    .referenceCode=${this.referenceCode.toString()}
             ></reference-code>
         </main>`
     }
@@ -181,8 +187,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
             contrastStops: [1],
             keyColors: ['#FFFFFF'],
             baseColor: '#FFFFFF',
-            colorSpace: 'CAM02',
-            contrastStops: [1]
+            colorSpace: 'CAM02'
         }
     }
     stateChanged(state) {
@@ -190,7 +195,7 @@ class AdaptiveColors extends connect(store)(LitElement) {
             ...state
         }
         this._applyColorsToState(this.state)
-        this.referenceCode = objectToQueryString(this.state);
+        this.referenceCode = setReferenceCode(this.state.keyColors, this.state.baseColor, this.state.contrastStops, this.state.colorSpace, this.state.colorRamp.colorScheme, this.state.colorRamp.colorStops);
         parent.postMessage({pluginMessage: {detail: {state: this.state, type: "SET_STATE"} }}, '*')
     }
 
@@ -261,13 +266,32 @@ class AdaptiveColors extends connect(store)(LitElement) {
     _handleInputChange = (e, changeType) => {
         switch (changeType) {
             case 'BULK_STATE_CHANGE':
-                let obj = buildParams(e.detail.value)
-                const urlParams = new URLSearchParams(e.detail.value);
-                const entries = urlParams.entries(); //returns an iterator of decoded [key,value] tuples
-                const params = paramsToObject(entries); //{abc:"foo",def:"[asf]",xyz:"5"}
-                // let obj = Object.fromEntries(new URLSearchParams(e.detail.value));
-                console.log(params);
-
+                let obj = getParams(e.detail.value)
+                store.dispatch(
+                    colorSpaceActions.updateColorSpace(
+                        obj.colorSpace
+                    )
+                )
+                store.dispatch(
+                    keyColorActions.addBulkColor(
+                        obj.keyColors
+                    )
+                )
+                store.dispatch(
+                    contrastRatioActions.updateRatios(
+                        obj.contrastStops
+                    )
+                )
+                store.dispatch(
+                    baseColorActions.updateColor(
+                        obj.baseColor
+                    )
+                )
+                store.dispatch(
+                    colorRampActions.bulkColorRamp(
+                        obj.colorStops, obj.colorScheme
+                    )
+                )
                 break;
             case 'KEY_COLORS':
                 store.dispatch(
@@ -314,10 +338,10 @@ class AdaptiveColors extends connect(store)(LitElement) {
         console.log(`Start: ${action.context}`, action.key);
         switch (action.context) {
             case "TEST_RAMP": 
-                parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, referenceCode: null, type: action.context} }}, '*')
+                parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, refCode: this.referenceCode.toString(), type: action.context} }}, '*')
                 break
             case "SET_STYLES": 
-                parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, referenceCode: null, type: action.context} }}, '*')
+                parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, refCode: null, type: action.context} }}, '*')
                 break
             case "COPY_REFERENCE_CODE":
                 

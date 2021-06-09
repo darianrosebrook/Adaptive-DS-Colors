@@ -15,13 +15,16 @@ class ColorSpace extends LitElement {
     }
     static get properties() {
         return {
-            colorSpace: {type: String}
+            colorSpace: {type: String},
+            options: [{type: Object}],
+            selected: {type: String}
         }
     }
 
     constructor() {
         super();
-        this.colorSpace = ''
+        this.options = [{value: 'CAM02', text: 'CIECAM02'},{value: 'LCH'},{value: 'LAB'},{value: 'HSL'},{value: 'HSLuv'},{value: 'RGB'},{value: 'HSV'}]
+        this.colorSpace = 'CAM02'
     }
     render() {
         return html`
@@ -30,14 +33,9 @@ class ColorSpace extends LitElement {
                     <h2>Color space</h2>
                 </div>
                 <select @change=${this._handleChange}>
-                    <option value="CAM02">CIECAM02</option>
-                    <option>LCH</option>
-                    <option>LAB</option>
-                    <option>HSL</option>
-                    <option>HSLuv</option>
-                    <option>RGB</option>
-                    <option>HSV</option>
-                    <option>HEX</option>
+                    ${this.options.map(option => html`
+                        <option value=${option.value} ?selected=${this.colorSpace === option.value}>${option.text ? option.text : option.value}</option>
+                    `)}
                 </select>
             </section>`
     }

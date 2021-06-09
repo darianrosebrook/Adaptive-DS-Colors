@@ -16,15 +16,6 @@ export const contrastStops = (state = initialState, action) => {
     case contrastRatioConstants.UPDATE_RATIOS:
       return action.entry;
       break;
-    // case contrastRatioConstants.BULK:
-    //   return {
-    //     ...state,
-    //     keyColors: {
-    //       ...state.Keycolors,
-    //       [action.entryId]: entry(state[action.entryId], action),
-    //     },
-    //   };
-    //   break;
     case contrastRatioConstants.CLEAR_RATIO_ITEM:
       state.splice(action.key, 1);
       return [...state]

@@ -1,13 +1,20 @@
 - Reference code
 <!-- -- Copy button functionality -->
--- translate into nested query object, read from query into nested object
+<!-- -- translate into nested query object, read from query into nested object -->
+<!-- -- print to swatch  -->
+<!-- -- link to leonardo -->
 
 - Set state
--- USE THE CODE YOU CREATE FOR REFERENCE CODE, reuse 
--- Through code upload
---- Parse string to deep object and arrays
+<!-- -- reuse code for reference in other state setters -->
+<!-- -- Through code upload -->
+<!-- --- Parse string to deep object and arrays -->
 -- To Figma storage
 --- also retrieve and set state if initalized
+
+- Set Styles
+-- Warn about overriding 
+-- Check if existing style matches, update color
+<!-- -- Set styles and notify -->
 
 - Copy
 <!-- -- Reference code -->
@@ -17,11 +24,11 @@
 <!-- -- be able to remove the color -->
 -- be able to lock the color
 
-<!-- - Test results
--- Print color results as a vertical auto layout frame, 24px gap
---- Color swatch, named to the color style, 256 X 128, 4px rounded corner
---- color name and stop, text node 
---- color hex code  -->
+- Test results
+<!-- -- Print color results as a vertical auto layout frame, 24px gap -->
+<!-- --- Color swatch, named to the color style, 256 X 128, 4px rounded corner -->
+<!-- --- color name and stop, text node  -->
+<!-- --- color hex code  -->
 
-<!-- Removing a swatch
-- when removing a swatch, the color stop name isn't synced anymore. -->
+Removing a swatch
+<!-- - when removing a swatch, the color stop name isn't synced anymore. -->

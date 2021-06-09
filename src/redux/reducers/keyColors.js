@@ -15,15 +15,9 @@ export const keyColors = (state = initialState, action) => {
       newArray[key] = entry;
       return newArray;
       break;
-    // case keyColorConstants.ADD_BULK_COLOR:
-    //   return {
-    //     ...state,
-    //     keyColors: {
-    //       ...state.Keycolors,
-    //       [action.entryId]: entry(state[action.entryId], action),
-    //     },
-    //   };
-    //   break;
+    case keyColorConstants.ADD_BULK_COLOR:
+      return action.entry
+      break;
     case keyColorConstants.CLEAR_COLOR_ITEM:
       state.splice(action.key, 1);
 

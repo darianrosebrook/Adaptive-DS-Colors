@@ -27,6 +27,10 @@ export const colorRamp = (state = initialState, action) => {
       }
       return newColorRamp;
       break;
+    case colorRampConstants.BULK_COLOR_RAMP:
+      newColorRamp = {...state, colorStops: action.colorStops, colorScheme: action.colorScheme}
+      return newColorRamp;
+      break
     case colorRampConstants.ADD_COLOR_STOP:
       newArray[action.entry - 1] = action.entry * 100;
       newColorRamp = {...state, colorStops: newArray};

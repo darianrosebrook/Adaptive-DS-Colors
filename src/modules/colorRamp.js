@@ -49,14 +49,13 @@ class ColorRamp extends LitElement{
                 
             <div><h2>Color ramp</h2></div>
                 <div>
-                    <input @change=${this._handleChange} type="text" placeholder="Name your color" />
+                    <input @change=${this._handleChange} type="text" placeholder="Name your color" .value=${this.colorRamp.colorScheme} />
                 </div>
                 <div>
                     <color-results  .contrastStops=${this.contrastStops} .colorRamp=${this.colorRamp} ></color-results>
                 </div>
                 <div>
-                    <button-m buttonText="Copy"></button-m>
-                    <button-m context="TEST_RAMP" buttonText="Test"></button-m>
+                    <button-m context="TEST_RAMP" buttonText="Test Swatches"></button-m>
                     <button-m context="SET_STYLES" buttonText="Set styles"></button-m>
                 </div>
             </section>`

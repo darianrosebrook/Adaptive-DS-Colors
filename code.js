@@ -98,7 +98,7 @@ function main() {
             });
             figma.notify(`Set ${entries.colors.length} styles 🥳`);
         }
-        function newColorRamp(entries) {
+        function newColorRamp(entries, refCode) {
             let colorScheme;
             if (entries.colorScheme == '' || undefined) {
                 colorScheme = "Neutral";
@@ -111,7 +111,7 @@ function main() {
             let parentProperties = {
                 layoutMode: "VERTICAL",
                 fills: [],
-                itemSpacing: 32,
+                itemSpacing: 16,
                 paddingLeft: 0,
                 paddingRight: 0,
                 paddingTop: 0,
@@ -141,8 +141,14 @@ function main() {
                 parent[item] = parentProperties[item];
             });
             let childrenToPush = [];
+            let refContainer = figma.createFrame();
+            Object.keys(containerProperties).map((item, key) => {
+                refContainer[item] = containerProperties[item];
+            });
             entries.colors.map((item, key) => {
                 let container = figma.createFrame();
+                let accessibilityContainer = figma.createFrame();
+                let colorTextContainer = figma.createFrame();
                 let textContainer = figma.createFrame();
                 textContainer.resize(256, 14);
                 Object.keys(textContainerProperties).map(item => {
@@ -150,6 +156,8 @@ function main() {
                 });
                 Object.keys(containerProperties).map((item, key) => {
                     container[item] = containerProperties[item];
+                    accessibilityContainer[item] = containerProperties[item];
+                    colorTextContainer[item] = containerProperties[item];
                 });
                 let name;
                 if (entries.colorStops[key] == '' || undefined) {
@@ -161,13 +169,26 @@ function main() {
                 let rect = figma.createRectangle();
                 rect.resize(256, 128);
                 rect.cornerRadius = 4;
-                let hexCode = createNewText(item.color);
+                let hexCode = createNewText(item.color.toUpperCase());
                 let colorName = createNewText(`${colorScheme} ${name}`);
+                let accessibilityTitle = createNewText('Accessibility');
+                let colorTitle = createNewText('Color');
+                accessibilityTitle.fontSize = 10;
+                colorTitle.fontSize = 10;
                 colorName.fontSize = 16;
-                let contrastRatioText = createNewText(`${item.contrastRatio} : 1`);
+                let colorScores = getContrastScores(item.contrastRatio);
+                let contrastRatioText = createNewText(`${item.contrastRatio}:1\n(${colorScores.largeText}) Large Text\n(${colorScores.normalText}) Small Text`);
                 rect.name = `Color Ramp / ${colorScheme} / ${colorScheme} ${name}`;
                 rect.fills = [{ color: hexToRgb(item.color), type: 'SOLID' }];
-                childrenToPush = [contrastRatioText, hexCode];
+                childrenToPush = [contrastRatioText, accessibilityTitle];
+                childrenToPush.map(item => {
+                    accessibilityContainer.insertChild(0, item);
+                });
+                childrenToPush = [hexCode, colorTitle];
+                childrenToPush.map(item => {
+                    colorTextContainer.insertChild(0, item);
+                });
+                childrenToPush = [accessibilityContainer, colorTextContainer];
                 childrenToPush.map(item => {
                     textContainer.insertChild(0, item);
                 });
@@ -177,11 +198,30 @@ function main() {
                 });
                 parent.appendChild(container);
             });
+            let referenceCode = createNewText(refCode);
+            let referenceCodeTitle = createNewText('Reference Code');
+            let testOnLeonardo = createNewText('View color ramp on LeonardoColor.io');
+            referenceCodeTitle.fontSize = 14;
+            testOnLeonardo.fontSize = 10;
+            referenceCode.textAutoResize = "WIDTH_AND_HEIGHT";
+            let hyperlinkText = 'https://leonardocolor.io/?' + refCode;
+            testOnLeonardo.hyperlink = { type: 'URL', value: hyperlinkText };
+            refContainer.layoutAlign = "STRETCH";
+            referenceCode.layoutAlign = "STRETCH";
+            referenceCode.fontSize = 10;
+            childrenToPush = [testOnLeonardo, referenceCode, referenceCodeTitle];
+            childrenToPush.map(item => {
+                refContainer.insertChild(0, item);
+            });
+            parent.appendChild(refContainer);
             return parent;
         }
         figma.ui.onmessage = msg => {
+            if (msg.detail.type === 'POST_MESSAGE') {
+                figma.notify(msg.detail.message);
+            }
             if (msg.detail.type === 'TEST_RAMP') {
-                let ramp = newColorRamp(msg.detail.ramp);
+                let ramp = newColorRamp(msg.detail.ramp, msg.detail.refCode);
                 figma.currentPage.selection = [ramp];
                 figma.viewport.scrollAndZoomIntoView([ramp]);
                 figma.notify('Printing a color swatch 🧪');

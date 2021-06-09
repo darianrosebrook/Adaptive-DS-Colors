@@ -30,7 +30,7 @@ class ReferenceCode extends LitElement {
     render() {
         return html`
             <section>
-                <div> <h2>Reference code</h2><tooltip-trigger></tooltip-trigger></div>
+                <div> <h2>Reference code</h2></div>
                 <div class="grid">
                     <input id="refCode" type="text" .value=${this.referenceCode} />
                     <button-m @click=${this._handleClick}>Copy</button-m>

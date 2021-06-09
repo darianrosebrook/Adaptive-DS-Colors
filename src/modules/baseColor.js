@@ -17,11 +17,13 @@ class BaseColor extends connect(store)(LitElement) {
     }
     static get properties() {
         return {
+            baseColor: {type: String}
         }
     }
 
     constructor() {
         super();
+        this.baseColor = '#ffffff';
     }
     render() {
         return html`
@@ -30,7 +32,7 @@ class BaseColor extends connect(store)(LitElement) {
                     <h2>Base color</h2>
                 </div>
                 <div> 
-                    <color-swatch .colorValue=${{color: "#FFFFFF", key: 0}}></color-swatch>
+                    <color-swatch .colorValue=${{color: this.baseColor, key: 0}}></color-swatch>
                 </div>
             </section>`
     }

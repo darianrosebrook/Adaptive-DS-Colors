@@ -12,13 +12,19 @@ class Button extends LitElement {
                 align-items: center;
                 min-height: 3rem;
             }
+            .disabled {
+                border: 1px solid var(--cr-grey-10);
+                color: var(--cr-grey-40);
+                pointer-events: none;
+            }
         `]
     }
     static get properties() {
         return {
             buttonText: {type: String},
             context: {type: String},
-            key: {type: Number}
+            key: {type: Number},
+            disabledButton: {type: Boolean}
         }
     }
     constructor() {
@@ -26,14 +32,20 @@ class Button extends LitElement {
         this.buttonText = '';
         this.context = ';'
         this.key = 0;
+        this.disabledButton = false;
     }
     render() {
         return html`
-            ${this.buttonText ? html`<style>button{grid-template-columns: 1fr auto;}</style>` : ``}
-            <button @click=${this._handleClick}>
-                ${this.buttonText}
-                <slot></slot> 
-            </button>
+            ${this.buttonText ? html`<style>button{grid-template-columns: 1fr auto;}</style>` : null}
+            ${this.disabledButton ? 
+                html`<button class="disabled" disabled>${this.buttonText}
+                        <slot></slot> 
+                    </button>` 
+                : html`<button @click=${this._handleClick}>${this.buttonText}
+                        <slot></slot> 
+                    </button>`
+            }
+                
             `
     }
     _handleClick = () => {

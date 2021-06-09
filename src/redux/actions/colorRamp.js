@@ -2,6 +2,7 @@ import { colorRampConstants } from "../constants";
 // import { nanoid } from 'nanoid';
 export const colorRampActions = {
   updateColorRamp,
+  bulkColorRamp,
   addColorStop,
   clearColorStops,
   clearColorStopItem
@@ -13,6 +14,15 @@ function updateColorRamp(entry, key) {
     type: colorRampConstants.UPDATE_COLOR_RAMP, 
     entry,
     key
+  });
+  }
+}
+function bulkColorRamp(colorStops,colorScheme) {
+  return dispatch => {
+  dispatch({ 
+    type: colorRampConstants.BULK_COLOR_RAMP, 
+    colorStops,
+    colorScheme
   });
   }
 }

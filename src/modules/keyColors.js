@@ -97,9 +97,9 @@ class keyColors extends LitElement {
                 ${this.modal ? html`<div class="modal" >
                     ${this.modal === 'ADD_BULK' ? html`<h6>Add bulk colors</h6><p>Add HEX colors separated by a comma or new line</p>` :
                                     this.modal !== null ?  html`<h6>Add a reference code</h6><p>Add a reference code from a previous session</p>` : null}
-                    <textarea @change=${this._handleChange} id=${this.modal}></textarea>
+                    <textarea @input=${this._handleChange} id=${this.modal}></textarea>
                     <button-m @click=${e => this._handleClick(e, 'CANCEL')}>Cancel</button-m>
-                    <button-m @click=${e => this._handleClick(e, 'ADD')}>Add</button-m>
+                    ${this.value ? html`<button-m @click=${e => this._handleClick(e, 'ADD')}  >Set colors</button-m>`  : html`<button-m @click=${e => this._handleClick(e, 'ADD')} .disabledButton=${true}>Set colors</button-m>` } 
 
                 </div> ` : null}
                 
@@ -111,19 +111,26 @@ class keyColors extends LitElement {
     _handleClick = (e, type) => {
         type === 'BULK_KEY_COLOR' ? this.modal = 'ADD_BULK' : 
         type === 'CODE_KEY_COLORS' ? this.modal = 'CODE_KEY_COLORS' : 
-        type === 'CANCEL' ? (this.modal = null) : 
+        type === 'CANCEL' ? this._closeModal() : 
         type === 'ADD' ? this._addColors() : 
         null
     }
     _addColors = () => {
-        const event = new CustomEvent('addColorsToKeys', {
-            bubbles: true,
-            composed: true,
-            detail: {type: this.modal, value: this.value, key: this.key}
-          });
-
-        this.dispatchEvent(event);
+        if (this.value ){
+            const event = new CustomEvent('addColorsToKeys', {
+                bubbles: true,
+                composed: true,
+                detail: {type: this.modal, value: this.value, key: this.key}
+              });
+    
+            this.dispatchEvent(event);
+            this._closeModal();
+        } else {
+            parent.postMessage({pluginMessage: {detail: {message: '⚠️ Please fill out the text area before submitting', type: 'POST_MESSAGE'} }}, '*')
+        }
+        
     }
+    _closeModal = () => {this.value = null;this.modal = null; }
 } 
 
 customElements.define('key-colors', keyColors)
