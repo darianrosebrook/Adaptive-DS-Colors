@@ -1,9 +1,8 @@
 import {LitElement, html, css} from 'lit';
-import styles from '../styles'
-import '../components/button'
-import '../components/contrastStop'
-import '../components/tooltipTrigger'
-import '../components/gradientMap'
+import styles from '../styles';
+import '../components/button';
+import '../components/contrastStop';
+import '../components/gradientMap';
 
 class ContrastRatios extends LitElement {
     static get styles() {
@@ -32,7 +31,7 @@ class ContrastRatios extends LitElement {
     constructor() {
         super();
         this.ratios = [1.00];
-        this.colorResults = ['#FFFFFF']
+        this.colorResults = ['#FFFFFF'];
     }
     render() {
         return html`

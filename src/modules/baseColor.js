@@ -2,25 +2,17 @@ import {LitElement, html, css} from 'lit';
 import { store } from '../redux/store.js';
 import { connect } from "pwa-helpers";
 import styles from '../styles'
-import '../components/tooltipTrigger'
 import '../components/colorSwatch.js'
 class BaseColor extends connect(store)(LitElement) {
     static get styles() {
         return [
             styles,
-            css`
-                div {
-                    margin-bottom: .5rem;
-                }
-            `
+            css`div {margin-bottom: .5rem;}`
         ];
     }
     static get properties() {
-        return {
-            baseColor: {type: String}
-        }
+        return {baseColor: {type: String}}
     }
-
     constructor() {
         super();
         this.baseColor = '#ffffff';

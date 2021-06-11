@@ -1,5 +1,5 @@
 import {LitElement, html, css} from 'lit';
-import styles from '../styles'
+import styles from '../styles';
 class ColorSpace extends LitElement {
     static get styles() {
         return [
@@ -23,8 +23,8 @@ class ColorSpace extends LitElement {
 
     constructor() {
         super();
-        this.options = [{value: 'CAM02', text: 'CIECAM02'},{value: 'LCH'},{value: 'LAB'},{value: 'HSL'},{value: 'HSLuv'},{value: 'RGB'},{value: 'HSV'}]
-        this.colorSpace = 'CAM02'
+        this.options = [{value: 'CAM02', text: 'CIECAM02'},{value: 'LCH'},{value: 'LAB'},{value: 'HSL'},{value: 'HSLuv'},{value: 'RGB'},{value: 'HSV'}];
+        this.colorSpace = 'CAM02';
     }
     render() {
         return html`

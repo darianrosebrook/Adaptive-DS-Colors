@@ -1,8 +1,7 @@
 import {LitElement, html, css} from 'lit';
-import styles from '../styles'
-import '../components/colorRampResults'
-import '../components/tooltipTrigger'
-import '../components/icon'
+import styles from '../styles';
+import '../components/colorRampResults';
+import '../components/icon';
 class ColorRamp extends LitElement{
     static get styles() {
         return [
@@ -61,7 +60,6 @@ class ColorRamp extends LitElement{
             </section>`
     }
     _handleChange = (e) => {
-       
         const event = new CustomEvent('colorThemeChange', {
             bubbles: true,
             composed: true,

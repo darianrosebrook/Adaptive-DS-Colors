@@ -8,10 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 figma.showUI(__html__, { width: 500, height: 800 });
-const postFigmaMessage = (type = '', payload = {}) => figma.ui.postMessage({
-    type,
-    payload,
-});
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
@@ -20,75 +16,94 @@ function hexToRgb(hex) {
         b: parseInt(result[3], 16) / 255
     } : null;
 }
+function rgb2hsl(obj) {
+    console.log(obj);
+    let r = obj.r, g = obj.g, b = obj.b;
+    let cmin = Math.min(r, g, b), cmax = Math.max(r, g, b), delta = cmax - cmin, h = 0, s = 0, l = 0;
+    if (delta == 0)
+        h = 0;
+    else if (cmax == r)
+        h = ((g - b) / delta) % 6;
+    else if (cmax == g)
+        h = (b - r) / delta + 2;
+    else
+        h = (r - g) / delta + 4;
+    h = Math.round(h * 60);
+    if (h < 0)
+        h += 360;
+    l = (cmax + cmin) / 2;
+    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+    s = +(s * 100).toFixed(1);
+    l = +(l * 100).toFixed(1);
+    return "hsl(" + Math.round(h) + ", " + Math.round(s) + "%, " + Math.round(l) + "%)";
+}
 function getContrastScores(contrast) {
     let largeText;
-    let normalText;
+    let smallText;
     switch (true) {
         case contrast > 7:
             largeText = 'AAA';
-            normalText = 'AAA';
+            smallText = 'AAA';
             break;
         case contrast >= 4.5:
             largeText = 'AAA';
-            normalText = 'AA';
+            smallText = 'AA';
             break;
         case contrast >= 3:
             largeText = 'AA';
-            normalText = 'N/A';
+            smallText = 'N/A';
             break;
         default:
             largeText = 'N/A';
-            normalText = 'N/A';
+            smallText = 'N/A';
             break;
     }
-    return { largeText, normalText };
+    return { largeText, smallText };
 }
+function defineColorScheme(entry) {
+    if (entry == '' || undefined) {
+        return "Neutral";
+    }
+    else {
+        return entry;
+    }
+}
+const addPropertiesToContainer = (properties, container) => {
+    Object.keys(properties).map((item, key) => {
+        container[item] = properties[item];
+    });
+};
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         yield figma.loadFontAsync({ family: "Roboto", style: "Regular" });
-        let styles = figma.getLocalPaintStyles().map((item, key) => { return { name: item.name }; });
         function createNewText(characters) {
             const newTextNode = figma.createText();
             newTextNode.characters = characters;
             return newTextNode;
         }
         function createFillStyles(entries) {
-            let colorScheme;
-            let name;
-            // if (styles.length > 0) {
-            //  styles.forEach(style => {
-            //    console.log(style.name);
-            //    for (let i = 0; i < entries.colors.length; i++) {
-            //     if (style.name == `Color Ramp / ${colorScheme} / ${colorScheme} ${entries.colorStop[i]}`) {
-            //       console.log('it matches');
-            //       const solidPaint = {
-            //         type: "SOLID",
-            //         color: hexToRgb(entries.colors[i].color),
-            //         opacity: 1
-            //       };
-            //       style.paints = [solidPaint];
-            //     }
-            //    }
-            //  })
-            // }
-            if (entries.colorScheme == '' || undefined) {
-                colorScheme = "Neutral";
-            }
-            else {
-                colorScheme = entries.colorScheme;
-            }
+            let styles = figma.getLocalPaintStyles();
+            let colorScheme = defineColorScheme(entries.colorScheme.trim());
+            let styleName;
             entries.colors.map((item, key) => {
                 let scores = getContrastScores(item.contrastRatio);
-                let resultText = `${item.contrastRatio}:1\n(${scores.largeText}) Large text\n(${scores.normalText}) Normal text`;
+                let resultText = `${item.contrastRatio}:1\n(${scores.largeText}) Large text\n(${scores.smallText}) Normal text`;
                 if (entries.colorStops[key] == '' || undefined) {
-                    name = (key + 1) * 100;
+                    styleName = `${colorScheme} / ${colorScheme} ${(key + 1) * 100}`;
                 }
                 else {
-                    name = entries.colorStops[key];
+                    styleName = `${colorScheme} / ${colorScheme} ${entries.colorStops[key].trim()}`;
                 }
-                const style = figma.createPaintStyle();
-                style.name = `Color Ramp / ${colorScheme} / ${colorScheme} ${name}`;
-                style.description = `${colorScheme} ${name}\n${entries.colors[key].color}\n${resultText}`;
+                let style;
+                const result = styles.find(({ name }) => name === 'Color Ramp / ' + styleName);
+                if (result) {
+                    style = result;
+                }
+                else {
+                    style = figma.createPaintStyle();
+                    style.name = 'Color Ramp / ' + styleName;
+                }
+                style.description = `${styleName}\n${entries.colors[key].color}\n${resultText}`;
                 const solidPaint = {
                     type: "SOLID",
                     color: hexToRgb(item.color),
@@ -96,16 +111,10 @@ function main() {
                 };
                 style.paints = [solidPaint];
             });
-            figma.notify(`Set ${entries.colors.length} styles 🥳`);
+            figma.notify(`Set ${entries.colors.length} style` + `${entries.colors.length > 1 ? 's' : ''} 🥳`);
         }
         function newColorRamp(entries, refCode) {
-            let colorScheme;
-            if (entries.colorScheme == '' || undefined) {
-                colorScheme = "Neutral";
-            }
-            else {
-                colorScheme = entries.colorScheme;
-            }
+            let colorScheme = defineColorScheme(entries.colorScheme.trim());
             let parent = figma.createFrame();
             parent.resize(256, 128);
             let parentProperties = {
@@ -137,14 +146,10 @@ function main() {
                 primaryAxisAlignItems: "SPACE_BETWEEN",
                 fills: []
             };
-            Object.keys(parentProperties).map((item, key) => {
-                parent[item] = parentProperties[item];
-            });
             let childrenToPush = [];
             let refContainer = figma.createFrame();
-            Object.keys(containerProperties).map((item, key) => {
-                refContainer[item] = containerProperties[item];
-            });
+            addPropertiesToContainer(parentProperties, parent);
+            addPropertiesToContainer(containerProperties, refContainer);
             entries.colors.map((item, key) => {
                 let container = figma.createFrame();
                 let accessibilityContainer = figma.createFrame();
@@ -169,7 +174,7 @@ function main() {
                 let rect = figma.createRectangle();
                 rect.resize(256, 128);
                 rect.cornerRadius = 4;
-                let hexCode = createNewText(item.color.toUpperCase());
+                let hexCode = createNewText(`${item.color.toUpperCase()}\n${rgb2hsl(hexToRgb(item.color))}`);
                 let colorName = createNewText(`${colorScheme} ${name}`);
                 let accessibilityTitle = createNewText('Accessibility');
                 let colorTitle = createNewText('Color');
@@ -177,7 +182,7 @@ function main() {
                 colorTitle.fontSize = 10;
                 colorName.fontSize = 16;
                 let colorScores = getContrastScores(item.contrastRatio);
-                let contrastRatioText = createNewText(`${item.contrastRatio}:1\n(${colorScores.largeText}) Large Text\n(${colorScores.normalText}) Small Text`);
+                let contrastRatioText = createNewText(`${item.contrastRatio}:1\n(${colorScores.largeText}) Large Text\n(${colorScores.smallText}) Small Text`);
                 rect.name = `Color Ramp / ${colorScheme} / ${colorScheme} ${name}`;
                 rect.fills = [{ color: hexToRgb(item.color), type: 'SOLID' }];
                 childrenToPush = [contrastRatioText, accessibilityTitle];
@@ -200,10 +205,10 @@ function main() {
             });
             let referenceCode = createNewText(refCode);
             let referenceCodeTitle = createNewText('Reference Code');
-            let testOnLeonardo = createNewText('View color ramp on LeonardoColor.io');
             referenceCodeTitle.fontSize = 14;
-            testOnLeonardo.fontSize = 10;
             referenceCode.textAutoResize = "WIDTH_AND_HEIGHT";
+            let testOnLeonardo = createNewText('View color ramp on LeonardoColor.io');
+            testOnLeonardo.fontSize = 10;
             let hyperlinkText = 'https://leonardocolor.io/?' + refCode;
             testOnLeonardo.hyperlink = { type: 'URL', value: hyperlinkText };
             refContainer.layoutAlign = "STRETCH";
@@ -224,7 +229,7 @@ function main() {
                 let ramp = newColorRamp(msg.detail.ramp, msg.detail.refCode);
                 figma.currentPage.selection = [ramp];
                 figma.viewport.scrollAndZoomIntoView([ramp]);
-                figma.notify('Printing a color swatch 🧪');
+                figma.notify('🧪 Printing a color swatch');
             }
             if (msg.detail.type === 'SET_STYLES') {
                 createFillStyles(msg.detail.ramp);

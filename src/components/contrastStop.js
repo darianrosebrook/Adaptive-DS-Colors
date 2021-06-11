@@ -40,12 +40,12 @@ class ContrastStop extends LitElement {
     _handleChange = (e) => {
         let el = e.target;
         if(el.type == "number" && el.max && el.min ){
-            let value = parseFloat(el.value).toFixed(2)
-            el.value = value // for 000 like input cleanup to 0
-            let max = parseInt(el.max)
-            let min = parseInt(el.min)
-            if ( value > max ) el.value = el.max
-            if ( value < min ) el.value = el.min
+            let value = parseFloat(el.value).toFixed(2);
+            el.value = value;
+            let max = parseInt(el.max);
+            let min = parseInt(el.min);
+            if ( value > max ) el.value = el.max;
+            if ( value < min ) el.value = el.min;
         }
         this.contrastRatio = {...this.contrastRatio, ratio: e.target.valueAsNumber}
 

@@ -1,6 +1,5 @@
 import {LitElement, html, css} from 'lit';
 import styles from '../styles'
-import '../components/tooltipTrigger'
 
 function clearSelection()
 {

@@ -62,6 +62,10 @@ function returnRatioCube(lum) {
   }
 let getParams = (refCode) => {
     let params = new URLSearchParams(refCode);
+    if (!params.has('colorKeys') || !params.has('colorStops') || !params.has('base') || !params.has('ratios') || !params.has('mode')) {
+        parent.postMessage({pluginMessage: {detail: {message: '⚠️ Please use the reference codes given by the plugin', type: 'POST_MESSAGE'} }}, '*')
+        return
+    }   
     let keyColors, colorStops;
     if(params.has('colorKeys')) {
         let cr = params.get('colorKeys');
@@ -267,6 +271,8 @@ class AdaptiveColors extends connect(store)(LitElement) {
         switch (changeType) {
             case 'BULK_STATE_CHANGE':
                 let obj = getParams(e.detail.value)
+                if (obj) {
+                    
                 store.dispatch(
                     colorSpaceActions.updateColorSpace(
                         obj.colorSpace
@@ -292,6 +298,9 @@ class AdaptiveColors extends connect(store)(LitElement) {
                         obj.colorStops, obj.colorScheme
                     )
                 )
+                } else {
+                    console.log('Please use the reference codes given by the plugin');
+                }
                 break;
             case 'KEY_COLORS':
                 store.dispatch(
@@ -335,13 +344,15 @@ class AdaptiveColors extends connect(store)(LitElement) {
         }
     }
     _executeAction = action => {
-        console.log(`Start: ${action.context}`, action.key);
         switch (action.context) {
             case "TEST_RAMP": 
                 parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, refCode: this.referenceCode.toString(), type: action.context} }}, '*')
                 break
             case "SET_STYLES": 
+                let confirmed = confirm('⚠️\n\nSetting styles will override existing styles of the same name.\n\nContinue?');
+                confirmed ? 
                 parent.postMessage({pluginMessage: {detail: {ramp: this.state.colorRamp, refCode: null, type: action.context} }}, '*')
+                : parent.postMessage({pluginMessage: {detail: {message: 'Canceled setting styles', type: 'POST_MESSAGE'} }}, '*')
                 break
             case "COPY_REFERENCE_CODE":
                 

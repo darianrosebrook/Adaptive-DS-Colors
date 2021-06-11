@@ -1,6 +1,6 @@
 import {LitElement, html, css} from 'lit';
-import './icon'
 import styles from '../styles'
+import './icon'
 
 class GradientMap extends LitElement {
   static get properties() {
@@ -14,7 +14,6 @@ class GradientMap extends LitElement {
     super();
     this.colors = ['#ffffff'];
     this.ratios = [];
-    this.sortedRatios = [];
     this.sortedColors = [];
   }
   render() {

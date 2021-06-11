@@ -1,7 +1,6 @@
 import {LitElement, html, css} from 'lit';
-import styles from '../styles'
-import '../components/colorSwatch.js'
-import '../components/tooltipTrigger'
+import styles from '../styles';
+import '../components/colorSwatch.js';
 
 
 class keyColors extends LitElement {
@@ -94,14 +93,18 @@ class keyColors extends LitElement {
                     `
                     })} 
                 </div> 
-                ${this.modal ? html`<div class="modal" >
-                    ${this.modal === 'ADD_BULK' ? html`<h6>Add bulk colors</h6><p>Add HEX colors separated by a comma or new line</p>` :
-                                    this.modal !== null ?  html`<h6>Add a reference code</h6><p>Add a reference code from a previous session</p>` : null}
-                    <textarea @input=${this._handleChange} id=${this.modal}></textarea>
-                    <button-m @click=${e => this._handleClick(e, 'CANCEL')}>Cancel</button-m>
-                    ${this.value ? html`<button-m @click=${e => this._handleClick(e, 'ADD')}  >Set colors</button-m>`  : html`<button-m @click=${e => this._handleClick(e, 'ADD')} .disabledButton=${true}>Set colors</button-m>` } 
-
-                </div> ` : null}
+                ${this.modal ? html`
+                    <div class="modal" >
+                        ${this.modal === 'ADD_BULK' ? html`<h6>Add bulk colors</h6><p>Add HEX colors separated by a comma or new line</p>` :
+                                        this.modal !== null ?  html`<h6>Add a reference code</h6><p>Add a reference code from a previous session</p>` : null}
+                        <textarea @input=${this._handleChange} id=${this.modal}></textarea>
+                        <button-m @click=${e => this._handleClick(e, 'CANCEL')}>Cancel</button-m>
+                        ${this.value ? 
+                            html`<button-m @click=${e => this._handleClick(e, 'ADD')}  >Set colors</button-m>`  
+                        : html`<button-m @click=${e => this._handleClick(e, 'ADD')} .disabledButton=${true}>Set colors</button-m>` 
+                        } 
+                    </div>`
+                : null}
                 
             </section>`
     }
@@ -109,11 +112,22 @@ class keyColors extends LitElement {
         this.value = e.target.value;
     }
     _handleClick = (e, type) => {
-        type === 'BULK_KEY_COLOR' ? this.modal = 'ADD_BULK' : 
-        type === 'CODE_KEY_COLORS' ? this.modal = 'CODE_KEY_COLORS' : 
-        type === 'CANCEL' ? this._closeModal() : 
-        type === 'ADD' ? this._addColors() : 
-        null
+        switch (type) {
+            case 'BULK_KEY_COLOR':
+                this.modal = 'ADD_BULK';
+                break;
+            case 'CODE_KEY_COLORS':
+                this.modal = 'CODE_KEY_COLORS';
+                break
+            case 'CANCEL':
+                this._closeModal();
+                break
+            case 'ADD':
+                this._addColors();
+                break
+            default:
+                break;
+        }
     }
     _addColors = () => {
         if (this.value ){
