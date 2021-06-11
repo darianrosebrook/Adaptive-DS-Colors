@@ -8,9 +8,7 @@ function hexToRgb(hex) {
     b: parseInt(result[3], 16) / 255
   } : null;
 }
-function rgb2hsl(obj){
-  console.log(obj);
-  
+function rgb2hsl(obj){  
   let r = obj.r,
       g = obj.g,
       b = obj.b;

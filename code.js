@@ -17,7 +17,6 @@ function hexToRgb(hex) {
     } : null;
 }
 function rgb2hsl(obj) {
-    console.log(obj);
     let r = obj.r, g = obj.g, b = obj.b;
     let cmin = Math.min(r, g, b), cmax = Math.max(r, g, b), delta = cmax - cmin, h = 0, s = 0, l = 0;
     if (delta == 0)
