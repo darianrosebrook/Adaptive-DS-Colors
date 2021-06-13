@@ -95,7 +95,7 @@ const at=t=>n=>class extends n{connectedCallback(){super.connectedCallback&&supe
                     <div>
                         <button-m title="Add a new key color" context="ADD_KEY_COLOR" ><svg-icon icon="add"></svg-icon></button-m>
                         <!-- <button-m @click=${t=>this._handleClick(t,"BULK_KEY_COLOR")} ><svg-icon icon="bulk"></svg-icon></button-m> -->
-                        <button-m @click=${t=>this._handleClick(t,"CODE_KEY_COLORS")} ><svg-icon icon="code"></svg-icon></button-m>
+                        <button-m title="Restore a session from a reference code" @click=${t=>this._handleClick(t,"CODE_KEY_COLORS")} ><svg-icon icon="code"></svg-icon></button-m>
                         <button-m title="Clear all key colors" context="CLEAR_KEY_COLORS" ><svg-icon icon="clear"></svg-icon></button-m>
                     </div>
                 </div>
@@ -113,7 +113,7 @@ const at=t=>n=>class extends n{connectedCallback(){super.connectedCallback&&supe
                 </div> 
                 ${this.modal?D`
                     <div class="modal" >
-                        ${"ADD_BULK"===this.modal?D`<h6>Add bulk colors</h6><p>Add HEX colors separated by a comma or new line</p>`:null!==this.modal?D`<h6>Add a reference code</h6><p>Add a reference code from a previous session</p>`:null}
+                        ${"ADD_BULK"===this.modal?D`<h6>Add bulk colors</h6><p>Add HEX colors separated by a comma or new line</p>`:null!==this.modal?D`<h6>Set colors from a reference code</h6><p>Restore a previous session using its reference code</p>`:null}
                         <textarea @input=${this._handleChange} id=${this.modal}></textarea>
                         <button-m @click=${t=>this._handleClick(t,"CANCEL")}>Cancel</button-m>
                         ${this.value?D`<button-m @click=${t=>this._handleClick(t,"ADD")}  >Set colors</button-m>`:D`<button-m @click=${t=>this._handleClick(t,"ADD")} .disabledButton=${!0}>Set colors</button-m>`} 

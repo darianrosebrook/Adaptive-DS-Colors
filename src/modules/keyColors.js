@@ -75,7 +75,7 @@ class keyColors extends LitElement {
                     <div>
                         <button-m title="Add a new key color" context="ADD_KEY_COLOR" ><svg-icon icon="add"></svg-icon></button-m>
                         <!-- <button-m @click=${e => this._handleClick(e, "BULK_KEY_COLOR")} ><svg-icon icon="bulk"></svg-icon></button-m> -->
-                        <button-m @click=${e => this._handleClick(e, "CODE_KEY_COLORS")} ><svg-icon icon="code"></svg-icon></button-m>
+                        <button-m title="Restore a session from a reference code" @click=${e => this._handleClick(e, "CODE_KEY_COLORS")} ><svg-icon icon="code"></svg-icon></button-m>
                         <button-m title="Clear all key colors" context="CLEAR_KEY_COLORS" ><svg-icon icon="clear"></svg-icon></button-m>
                     </div>
                 </div>
@@ -96,7 +96,7 @@ class keyColors extends LitElement {
                 ${this.modal ? html`
                     <div class="modal" >
                         ${this.modal === 'ADD_BULK' ? html`<h6>Add bulk colors</h6><p>Add HEX colors separated by a comma or new line</p>` :
-                                        this.modal !== null ?  html`<h6>Add a reference code</h6><p>Add a reference code from a previous session</p>` : null}
+                                        this.modal !== null ?  html`<h6>Set colors from a reference code</h6><p>Restore a previous session using its reference code</p>` : null}
                         <textarea @input=${this._handleChange} id=${this.modal}></textarea>
                         <button-m @click=${e => this._handleClick(e, 'CANCEL')}>Cancel</button-m>
                         ${this.value ? 

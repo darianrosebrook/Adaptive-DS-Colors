@@ -88,6 +88,7 @@ async function main() {
   }
 
   function createFillStyles(entries) {
+    
     let styles = figma.getLocalPaintStyles();
 
     let colorScheme = defineColorScheme(entries.colorScheme.trim());
