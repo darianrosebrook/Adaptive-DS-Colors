@@ -67,9 +67,9 @@ function getContrastScores(contrast) {
 }
 function defineColorScheme(entry) {
   if (entry == '' || undefined) {
-    return "Neutral"
+    return "Neutral";
   } else {
-    return entry
+    return entry;
   }
 }
 const addPropertiesToContainer = (properties, container) => {
@@ -88,23 +88,25 @@ async function main() {
   }
 
   function createFillStyles(entries) {
-    
     let styles = figma.getLocalPaintStyles();
-
+    let colorRamp = entries.colors;
     let colorScheme = defineColorScheme(entries.colorScheme.trim());
     let styleName; 
-
-    entries.colors.map((item, key) => {
-
+    colorRamp.map((item, key) => {
       let scores = getContrastScores(item.contrastRatio);
       let resultText = `${item.contrastRatio}:1\n(${scores.largeText}) Large text\n(${scores.smallText}) Normal text`;
-      
+      let colorStop = entries.colorStops[key];
+      if (typeof colorStop === 'number') {
+        colorStop = colorStop.toString();
+        console.log(typeof colorStop);
+        
+      }      
       if (entries.colorStops[key] == '' || undefined) {
         styleName = `${colorScheme} / ${colorScheme} ${(key + 1 )* 100}` 
       } else {
-        styleName = `${colorScheme} / ${colorScheme} ${entries.colorStops[key].trim()}` 
+        styleName = `${colorScheme} / ${colorScheme} ${entries.colorStops[key]}` 
       }
-
+      
       let style;
       const result = styles.find( ({ name }) => name === 'Color Ramp / ' + styleName );
       if (result) {
@@ -121,6 +123,7 @@ async function main() {
         opacity: 1
       };
       style.paints = [solidPaint];
+      
     })
       figma.notify(`Set ${entries.colors.length} style`+ `${entries.colors.length > 1 ? 's' : ''} 🥳`)
   }

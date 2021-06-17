@@ -82,16 +82,21 @@ function main() {
         }
         function createFillStyles(entries) {
             let styles = figma.getLocalPaintStyles();
+            let colorRamp = entries.colors;
             let colorScheme = defineColorScheme(entries.colorScheme.trim());
             let styleName;
-            entries.colors.map((item, key) => {
+            colorRamp.map((item, key) => {
                 let scores = getContrastScores(item.contrastRatio);
                 let resultText = `${item.contrastRatio}:1\n(${scores.largeText}) Large text\n(${scores.smallText}) Normal text`;
+                let colorStop = entries.colorStops[key];
+                if (typeof colorStop === 'number') {
+                    colorStop = colorStop.toString();
+                }
                 if (entries.colorStops[key] == '' || undefined) {
                     styleName = `${colorScheme} / ${colorScheme} ${(key + 1) * 100}`;
                 }
                 else {
-                    styleName = `${colorScheme} / ${colorScheme} ${entries.colorStops[key].trim()}`;
+                    styleName = `${colorScheme} / ${colorScheme} ${colorStop}`;
                 }
                 let style;
                 const result = styles.find(({ name }) => name === 'Color Ramp / ' + styleName);
