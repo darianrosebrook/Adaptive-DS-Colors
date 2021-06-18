@@ -97,14 +97,12 @@ async function main() {
       let resultText = `${item.contrastRatio}:1\n(${scores.largeText}) Large text\n(${scores.smallText}) Normal text`;
       let colorStop = entries.colorStops[key];
       if (typeof colorStop === 'number') {
-        colorStop = colorStop.toString();
-        console.log(typeof colorStop);
-        
+        colorStop = colorStop.toString();        
       }      
       if (entries.colorStops[key] == '' || undefined) {
         styleName = `${colorScheme} / ${colorScheme} ${(key + 1 )* 100}` 
       } else {
-        styleName = `${colorScheme} / ${colorScheme} ${entries.colorStops[key]}` 
+        styleName = `${colorScheme} / ${colorScheme} ${colorStop}` 
       }
       
       let style;

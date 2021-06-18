@@ -91,13 +91,12 @@ function main() {
                 let colorStop = entries.colorStops[key];
                 if (typeof colorStop === 'number') {
                     colorStop = colorStop.toString();
-                    console.log(typeof colorStop);
                 }
                 if (entries.colorStops[key] == '' || undefined) {
                     styleName = `${colorScheme} / ${colorScheme} ${(key + 1) * 100}`;
                 }
                 else {
-                    styleName = `${colorScheme} / ${colorScheme} ${entries.colorStops[key]}`;
+                    styleName = `${colorScheme} / ${colorScheme} ${colorStop}`;
                 }
                 let style;
                 const result = styles.find(({ name }) => name === 'Color Ramp / ' + styleName);
