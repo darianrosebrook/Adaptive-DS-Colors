@@ -258,10 +258,11 @@ class AdaptiveColors extends connect(store)(LitElement) {
             } else {
                 contrastDisplay = '#000000'
             }
+            contrastRatio >= -1 && contrastRatio <= 1 ? (contrastRatio = 1) : null;
             newArray[i] = {
                 ...newArray[i], 
                 color: array[i],
-                contrastRatio: Math.abs(contrastRatio.toFixed(2)),
+                contrastRatio: contrastRatio.toFixed(2),
                 contrastDisplay,
             }
         }

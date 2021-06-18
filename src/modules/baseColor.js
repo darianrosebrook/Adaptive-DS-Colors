@@ -21,7 +21,7 @@ class BaseColor extends connect(store)(LitElement) {
         return html`
             <section>
                 <div> 
-                    <h2>Base color</h2>
+                    <h2>Background color</h2>
                 </div>
                 <div> 
                     <color-swatch .colorValue=${{color: this.baseColor, key: 0}}></color-swatch>
