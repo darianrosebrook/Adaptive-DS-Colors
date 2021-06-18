@@ -28,7 +28,7 @@ class GradientMap extends LitElement {
          <div class="container">
          ${this.ratios.sort(function(a, b){return a-b}).map((item, key) => {
             return html`
-                <div class="contrast-stop" .style="top: calc(((${item}/${this.ratios[this.ratios.length - 1]}) * 100%) - 12px);"></div>
+                <div class="contrast-stop" .style="top: calc(((${Math.abs(item)}/${this.ratios[this.ratios.length - 1]}) * 100%) - 12px);"></div>
           `
           })} </div>
          </div>
