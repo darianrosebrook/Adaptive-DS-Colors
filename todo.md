@@ -16,6 +16,8 @@
 <!-- -- Check if existing style matches, update color -->
 <!-- -- Set styles and notify -->
 
+### Contrast Ratios
+- Allow for color to be set using negative numbers
 
 ### Copy
 <!-- -- Reference code -->

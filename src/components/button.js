@@ -30,7 +30,7 @@ class Button extends LitElement {
     constructor() {
         super();
         this.buttonText = '';
-        this.context = ';'
+        this.context = '';
         this.key = 0;
         this.disabledButton = false;
     }
