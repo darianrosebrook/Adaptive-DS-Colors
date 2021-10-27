@@ -6,7 +6,7 @@ const initialState = {
   colors: [{
       color: '#ffffff',
       contrastDisplay: '#000000',
-      contrastRatio: 1
+      ratio: 1
   }
   ],
   colorStops: ['100'],

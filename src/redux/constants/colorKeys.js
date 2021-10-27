@@ -1,4 +1,4 @@
-export const keyColorConstants = {
+export const colorKeyConstants = {
   NEW_COLOR: 'NEW_COLOR',
   EDIT_COLOR: 'EDIT_COLOR',
   ADD_BULK_COLOR: 'ADD_BULK_COLOR',

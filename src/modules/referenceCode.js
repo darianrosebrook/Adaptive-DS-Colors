@@ -12,6 +12,9 @@ class ReferenceCode extends LitElement {
             div {
                 margin-bottom: .5rem;
             }
+            #refCode {
+                width: 100%;
+            }
             .grid {
                 grid-template-columns: 5fr 1fr;
             }

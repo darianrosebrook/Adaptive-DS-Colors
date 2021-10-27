@@ -41,17 +41,17 @@ class ColorRampResults extends LitElement {
         return html`
             <div class="container">
                 <div class="inputs-container">
-                ${this.contrastStops.map((item, key) => {
+                ${this.inputRatios.map((item, key) => {
                         return html`<input @change=${e => this._handleChange(e, key)} type="text" placeholder="${(key + 1) * 100}" } value="${this.colorRamp.colorStops[key]}" } />`})}
                     
                 </div>
                 
                 <div class="ramp-results">
                     
-                ${this.contrastStops.map((item, key) => {
+                ${this.inputRatios.map((item, key) => {
                     return html`
                         <div class="ramp-item" .style=${`color: ${this.colorRamp.colors[key].contrastDisplay};background: ${this.colorRamp.colors[key].color}`} >
-                            <p>${this.colorRamp.colors[key].contrastRatio}</p><p>${this.colorRamp.colors[key].color}</p>
+                            <p>${this.colorRamp.colors[key].ratio}</p><p>${this.colorRamp.colors[key].color}</p>
                         </div>
                     `})}
                 </div>
@@ -61,13 +61,13 @@ class ColorRampResults extends LitElement {
     }
     static get properties() {
         return {
-            contrastStops: {type: Array },
+            inputRatios: {type: Array },
             colorResults: {
                 colorScheme: {type: String},
                 colors: [
                     {
                         contrastDisplay: {type: String},
-                        contrastRatio: {type: Number},
+                        ratio: {type: Number},
                         color: {type: String},
                     }
                 ],

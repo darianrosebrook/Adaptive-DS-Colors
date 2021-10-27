@@ -3,7 +3,7 @@ import {createSelector } from 'reselect';
 
 const initialState = [1.00]
 
-export const contrastStops = (state = initialState, action) => {
+export const inputRatios = (state = initialState, action) => {
   switch (action.type) {
     case contrastRatioConstants.ADD_NEW_RATIO:
       return [...state, action.entry ]

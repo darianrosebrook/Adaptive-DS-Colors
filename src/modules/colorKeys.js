@@ -3,7 +3,7 @@ import styles from '../styles';
 import '../components/colorSwatch.js';
 
 
-class keyColors extends LitElement {
+class colorKeys extends LitElement {
     static get styles() {
         return [styles, css `
             section {
@@ -58,14 +58,14 @@ class keyColors extends LitElement {
     }
     static get properties() {
         return {
-            keyColors: {type: Array},
+            colorKeys: {type: Array},
             modal: {type: String},
             value: {type: String}
         }
     }
     constructor() {
         super();
-        this.keyColors = ['#ffffff'];
+        this.colorKeys = ['#ffffff'];
     }
     render() {
         return html`
@@ -80,14 +80,14 @@ class keyColors extends LitElement {
                     </div>
                 </div>
                 <div class="colorGrid">
-                    ${this.keyColors.map((item, key) => {
+                    ${this.colorKeys.map((item, key) => {
                         return key === 0 ? html`
                         <div class='color-container'> 
-                            <color-swatch .colorValue="${{color: this.keyColors[key], key}}" ></color-swatch>
+                            <color-swatch .colorValue="${{color: this.colorKeys[key], key}}" ></color-swatch>
                         </div>
                     ` : html`
                         <div class='color-container'> 
-                            <color-swatch .colorValue="${{color: this.keyColors[key], key}}" ></color-swatch>
+                            <color-swatch .colorValue="${{color: this.colorKeys[key], key}}" ></color-swatch>
                             <button-m context="REMOVE_KEY_COLOR" key=${key}><svg-icon icon="clear"></svg-icon></button-m>
                         </div>
                     `
@@ -147,4 +147,4 @@ class keyColors extends LitElement {
     _closeModal = () => {this.value = null;this.modal = null; }
 } 
 
-customElements.define('key-colors', keyColors)
+customElements.define('key-colors', colorKeys)

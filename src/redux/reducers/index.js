@@ -1,7 +1,7 @@
-export { keyColors } from "./keyColors";
+export { colorKeys } from "./colorKeys";
 export { baseColor } from "./baseColor";
 export {  colorSpace } from "./colorSpace";
-export {  contrastStops } from "./contrastRatios";
+export {  inputRatios } from "./contrastRatios";
 export {  colorRamp } from "./colorRamp";
 
 

@@ -1,17 +1,17 @@
-import { keyColorConstants } from "../constants";
-export const keyColorActions = {
+import { colorKeyConstants } from "../constants";
+export const colorKeyActions = {
   addNewColor,
   updateColor,
   addBulkColor,
   addFromCode,
-  clearKeyColors,
+  clearcolorKeys,
   clearColorItem,
 };
 
 function addNewColor(entry) {
   return dispatch => {
   dispatch({ 
-    type: keyColorConstants.NEW_COLOR, 
+    type: colorKeyConstants.NEW_COLOR, 
     entry 
   });
   }
@@ -19,7 +19,7 @@ function addNewColor(entry) {
 function updateColor(entry, key) {
   return dispatch => {
   dispatch({ 
-    type: keyColorConstants.EDIT_COLOR, 
+    type: colorKeyConstants.EDIT_COLOR, 
     key,
     entry 
   });
@@ -27,25 +27,25 @@ function updateColor(entry, key) {
 }
 function addBulkColor(entry) {
   return { 
-    type: keyColorConstants.ADD_BULK_COLOR, 
+    type: colorKeyConstants.ADD_BULK_COLOR, 
     entry 
   };
 }
 function addFromCode(entry) {
   return { 
-    type: keyColorConstants.ADD_CODE_COLOR, 
+    type: colorKeyConstants.ADD_CODE_COLOR, 
     entry 
   };
 }
-function clearKeyColors(entry) {
+function clearcolorKeys(entry) {
   return { 
-    type: keyColorConstants.CLEAR_COLOR_LIST, 
+    type: colorKeyConstants.CLEAR_COLOR_LIST, 
     entry 
   };
 }
 function clearColorItem(entry, key) {
   return { 
-    type: keyColorConstants.CLEAR_COLOR_ITEM, 
+    type: colorKeyConstants.CLEAR_COLOR_ITEM, 
     key, 
     entry 
   };

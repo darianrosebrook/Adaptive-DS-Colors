@@ -5,7 +5,7 @@ export const contrastRatioActions = {
   updateStop,
   // addBulkStop,
   addFromCode,
-  clearContrastStops,
+  clearinputRatios,
   clearStopItem,
   updateRatios
 };
@@ -48,7 +48,7 @@ function addFromCode(entry) {
     entry 
   };
 }
-function clearContrastStops(entry) {
+function clearinputRatios(entry) {
   return { 
     type: contrastRatioConstants.CLEAR_RATIO_LIST, 
     entry 

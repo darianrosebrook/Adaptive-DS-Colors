@@ -93,8 +93,8 @@ async function main() {
     let colorScheme = defineColorScheme(entries.colorScheme.trim());
     let styleName; 
     colorRamp.map((item, key) => {
-      let scores = getContrastScores(item.contrastRatio);
-      let resultText = `${item.contrastRatio}:1\n(${scores.largeText}) Large text\n(${scores.smallText}) Normal text`;
+      let scores = getContrastScores(item.ratio);
+      let resultText = `${item.ratio}:1\n(${scores.largeText}) Large text\n(${scores.smallText}) Normal text`;
       let colorStop = entries.colorStops[key];
       if (typeof colorStop === 'number') {
         colorStop = colorStop.toString();        
@@ -197,8 +197,8 @@ async function main() {
       accessibilityTitle.fontSize = 10;
       colorTitle.fontSize = 10;
       colorName.fontSize = 16;
-      let colorScores = getContrastScores(item.contrastRatio)
-      let contrastRatioText = createNewText(`${item.contrastRatio}:1\n(${colorScores.largeText}) Large Text\n(${colorScores.smallText}) Small Text`)
+      let colorScores = getContrastScores(item.ratio)
+      let contrastRatioText = createNewText(`${item.ratio}:1\n(${colorScores.largeText}) Large Text\n(${colorScores.smallText}) Small Text`)
       rect.name = `Color Ramp / ${colorScheme} / ${colorScheme} ${name}`;
       rect.fills = [{color: hexToRgb(item.color), type: 'SOLID'}];
       

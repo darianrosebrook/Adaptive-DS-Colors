@@ -15,13 +15,13 @@ class ColorRamp extends LitElement{
     }
     static get properties() {
         return {
-            contrastStops: {type: Array},
+            inputRatios: {type: Array},
             colorResults: {
                 colorScheme: {type: String},
                 colors: [
                     {
                         contrastDisplay: {type: String},
-                        contrastRatio: {type: Number},
+                        ratio: {type: Number},
                         color: {type: String},
                     }
                 ],
@@ -31,12 +31,12 @@ class ColorRamp extends LitElement{
     }
     constructor() {
         super();
-        this.contrastStops = [1.00];
+        this.inputRatios = [1.00];
         this.colorRamp = {
             colors: [{
                 color: '#ffffff',
                 contrastDisplay: '#000000',
-                contrastRatio: 1
+                ratio: 1
             }],
             colorScheme: "Neutral",
             colorStops: ['100'],
@@ -51,7 +51,7 @@ class ColorRamp extends LitElement{
                     <input @change=${this._handleChange} type="text" placeholder="Name your color" .value=${this.colorRamp.colorScheme} />
                 </div>
                 <div>
-                    <color-results  .contrastStops=${this.contrastStops} .colorRamp=${this.colorRamp} ></color-results>
+                    <color-results  .inputRatios=${this.inputRatios} .colorRamp=${this.colorRamp} ></color-results>
                 </div>
                 <div>
                     <button-m context="TEST_RAMP" buttonText="Test Swatches"></button-m>
